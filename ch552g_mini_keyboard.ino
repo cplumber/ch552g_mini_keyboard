@@ -65,6 +65,7 @@ void loop()
 
   //task update
   buttons_update();
+  keyboard_update();
   auto_update();
   encoder_update();
   led_update();

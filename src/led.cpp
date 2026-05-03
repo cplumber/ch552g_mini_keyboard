@@ -40,24 +40,28 @@ void led_update()
 {
   if (led_mode_s == LED_LOOP)
   {
-    for (int i = 0; i < 3; i++)
+    for (int led = 0; led < 3; led++)
     {
-      color_hue_s[i] += 1;
-      if (color_hue_s[i] > 191)
-      {
-        color_hue_s[i] = 0;
-      }
+      NEO_clearPixel(led);
+    }
+
+    if (curretn_key_s >= 0 && curretn_key_s < 3)
+    {
+      NEO_writeColor(curretn_key_s, 1, 1, 1);
     }
   }
-  for (int led = 0; led < 3; led++)
+  else
   {
-    if (curretn_key_s == led)
+    for (int led = 0; led < 3; led++)
     {
-      NEO_writeColor(led, 255, 255, 255);
-    }
-    else
-    {
-      NEO_writeHue(led, color_hue_s[led], NEO_BRIGHT_KEYS);
+      if (curretn_key_s == led)
+      {
+        NEO_writeColor(led, 255, 255, 255);
+      }
+      else
+      {
+        NEO_writeHue(led, color_hue_s[led], NEO_BRIGHT_KEYS);
+      }
     }
   }
 

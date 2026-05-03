@@ -6,9 +6,13 @@
 #include "../configuration.h"
 
 #define MENU_CONF NUM_CONFIGURATION - 1
+#define ENC_LONG_PRESS_MS 2000UL
 
 static int current_mode_s = 0;                                       // current mode of keyboard
 static int menu_mode_s = 0;                                          // during menu coice
+static unsigned long enc_press_start_ms_s = 0;
+static bool enc_long_press_active_s = false;
+static bool enc_pressed_s = false;
 
 
 static void set_menu_led(void);
@@ -45,15 +49,33 @@ void keyboard_press_enc(keyboard_button_keyboard_mode_t mode)
 {
   if (mode == BTM_PRESS)
   {
-    auto_set_cycle(button_function_null);
-    menu_mode_s = current_mode_s;
-    current_mode_s = MENU_CONF;
-    set_menu_led();
+    enc_pressed_s = true;
+    enc_long_press_active_s = false;
+    enc_press_start_ms_s = millis();
   }
   if (mode == BTM_RELEASE)
   {
-    current_mode_s = menu_mode_s;
-    led_set_mode(LED_LOOP);
+    if (enc_long_press_active_s)
+    {
+      current_mode_s = menu_mode_s;
+      led_set_mode(LED_LOOP);
+    }
+    enc_pressed_s = false;
+  }
+}
+
+void keyboard_update(void)
+{
+  if (enc_pressed_s && !enc_long_press_active_s)
+  {
+    if ((millis() - enc_press_start_ms_s) >= ENC_LONG_PRESS_MS)
+    {
+      auto_set_cycle(button_function_null);
+      menu_mode_s = current_mode_s;
+      current_mode_s = MENU_CONF;
+      set_menu_led();
+      enc_long_press_active_s = true;
+    }
   }
 }
 

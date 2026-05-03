@@ -94,6 +94,9 @@ void keyboard_press_button( keyboard_button_t button,  keyboard_button_keyboard_
 // keyboard setup 
 void keyboard_setup(void);
 
+// keyboard periodic update
+void keyboard_update(void);
+
 // keyboard encoder press to enter in menu
 void keyboard_press_enc(keyboard_button_keyboard_mode_t mode);
 
