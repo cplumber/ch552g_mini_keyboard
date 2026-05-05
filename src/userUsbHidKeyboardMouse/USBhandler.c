@@ -473,6 +473,7 @@ void USBInterrupt(void) { // inline not really working in multiple files in SDCC
     UIF_BUS_RST = 0;
 
     UsbConfig = 0;
+    led_set_usb_suspended(0);
 
     // Clear interrupt flag
   }
@@ -481,6 +482,7 @@ void USBInterrupt(void) { // inline not really working in multiple files in SDCC
   if (UIF_SUSPEND) {
     UIF_SUSPEND = 0;
     if (USB_MIS_ST & bUMS_SUSPEND) { // Suspend
+      led_set_usb_suspended(1);
 
       // while ( XBUS_AUX & bUART0_TX );                    // Wait for Tx
       // SAFE_MOD = 0x55;
@@ -490,6 +492,7 @@ void USBInterrupt(void) { // inline not really working in multiple files in SDCC
       // 0x00;
 
     } else {             // Unexpected interrupt, not supposed to happen !
+      led_set_usb_suspended(0);
       USB_INT_FG = 0xFF; // Clear interrupt flag
     }
   }

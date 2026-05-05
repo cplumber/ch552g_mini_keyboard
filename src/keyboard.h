@@ -110,3 +110,16 @@ void button_menu_up(keyboard_button_keyboard_mode_t mode);
 // keyboard menu scroll down
 void button_menu_down(keyboard_button_keyboard_mode_t mode);
 
+// Google Meet hand raise / lower
+void keyboard_meet_raise_hand(keyboard_button_keyboard_mode_t mode);
+
+// VS Code terminal toggle
+void keyboard_vscode_toggle_terminal(keyboard_button_keyboard_mode_t mode);
+
+// VS Code source control focus
+void keyboard_vscode_source_control(keyboard_button_keyboard_mode_t mode);
+
+// VS Code window navigation
+void keyboard_vscode_next_window(keyboard_button_keyboard_mode_t mode);
+void keyboard_vscode_prev_window(keyboard_button_keyboard_mode_t mode);
+

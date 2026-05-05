@@ -9,7 +9,7 @@ I decided to open it and try to program it myself.
 
 ![Menu](img/key_menu.gif?raw=true)
 
-Change keyboard config by holding the encoder for 3 seconds, then rotating it
+Change keyboard config by holding the encoder for 1 second, then rotating it
 
 In the normal configs, encoder rotation controls system volume up/down. The menu config still uses the encoder for config selection.
 Short encoder click toggles the mic mute through the Windows bridge.
@@ -66,7 +66,7 @@ Use this as the fallback method if the default P3.6-to-VCC bootloader path does 
 
 1. Short pin 3 to GND.
 2. Plug USB while the pin is shorted.
-3. Hold for about 2 seconds.
+3. Hold for about 1 second.
 4. Release.
 5. Immediately click `Download`.
 
@@ -98,7 +98,7 @@ Use this as the fallback method if the default P3.6-to-VCC bootloader path does 
 
 This firmware can set up the keyboard in different configurations.
 Edit configuration.cpp to change it
-To change configuration, long-press the rotary encoder for 3 seconds, then rotate it.
+To change configuration, long-press the rotary encoder for 1 second, then rotate it.
 
 On configurtion is possible to send keyboard or mous event and setup automatic cycle rutine
 
@@ -108,12 +108,11 @@ Current configuration
 
 | Config | BTN 1 | BTN 2 | BTN 3 | Encoder CW | Encoder CCW | Encoder press |
 | --- | --- | --- | --- | --- | --- | --- |
-| Copy / paste | `Ctrl+C` | `Ctrl+V` | `Ctrl+Z` | `Volume up` | `Volume down` | Short click: mic mute, hold `2s`: menu |
-| Photoshop | `E` | `S` | `Alt + Left click` | `Volume up` | `Volume down` | Short click: mic mute, hold `2s`: menu |
-| Game | `A x4` | `B x8` | `5x Left click` | `Volume up` | `Volume down` | Short click: mic mute, hold `2s`: menu |
-| Auto keyboard | Auto type `Hello World` | Auto mouse square | `Unused` | `Volume up` | `Volume down` | Short click: mic mute, hold `2s`: menu |
+| Copy / paste | `Ctrl+C` | `Ctrl+V` | `Ctrl+Z` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
+| Google Meet | `Ctrl+D` | `Ctrl+E` | `Ctrl+Alt+H` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
+| VS Code | `Ctrl+Shift+E` | `Ctrl+Shift+G`, then `G` | `Ctrl+\`` | `Alt+Tab` held for `1s` | `Alt+Shift+Tab` held for `1s` | Short click: mic mute, hold `1s`: menu |
 
-The menu config uses the encoder to move through the list; the four rows above are the normal working configs.
+The menu config uses the encoder to move through the first 3 configs; the rows above are the active normal working configs.
 
 ## Pinout
 

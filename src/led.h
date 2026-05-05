@@ -31,6 +31,9 @@ extern "C" {
 // update the cached mic mute state for the normal LED mode
 void led_set_mic_mute_state(uint8_t muted);
 
+// blank LEDs while the USB bus is suspended
+void led_set_usb_suspended(uint8_t suspended);
+
 // optional C-callable accessor for the USB bridge
 uint8_t led_get_mic_mute_state(void);
 #ifdef __cplusplus
