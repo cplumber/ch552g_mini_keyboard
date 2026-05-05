@@ -112,7 +112,7 @@ Current configuration
 | Google Meet | `Ctrl+D` | `Ctrl+E` | `Ctrl+Alt+H` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
 | VS Code | `Ctrl+Shift+E` | `Ctrl+Shift+G`, then `G` | `Ctrl+\`` | `Alt+Tab` held for `1s` | `Alt+Shift+Tab` held for `1s` | Short click: mic mute, hold `1s`: menu |
 
-The menu config uses the encoder to move through the first 3 configs; the rows above are the active normal working configs.
+The menu config uses the encoder to move through the first 3 configs; the selected profile is saved in DataFlash, so it survives power cycles.
 
 ## Pinout
 

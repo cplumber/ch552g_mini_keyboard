@@ -8,6 +8,7 @@
 #define MENU_CONF NUM_CONFIGURATION - 1
 #define MENU_SELECTION_LAST 2
 #define ENC_LONG_PRESS_MS 1000UL
+#define MENU_MODE_STORAGE_ADDR 0
 
 static int current_mode_s = 0;                                       // current mode of keyboard
 static int menu_mode_s = 0;                                          // during menu coice
@@ -21,6 +22,8 @@ static const unsigned long VSCODE_ALT_HOLD_MS = 1000UL;
 
 static void set_menu_led(void);
 static void enter_menu(void);
+static void save_menu_mode(void);
+static uint8_t load_menu_mode(void);
 static void keyboard_press_mode_1(keyboard_button_t button, keyboard_button_keyboard_mode_t mode);
 static void keyboard_press_mode_2(keyboard_button_t button, keyboard_button_keyboard_mode_t mode);
 static void keyboard_press_auto(keyboard_button_t button, keyboard_button_keyboard_mode_t mode);
@@ -39,13 +42,39 @@ const button_function_t button_function_null = {
 
 static void set_menu_led(void)
 {
-  int led_index = menu_mode_s % 3;
-  int color_background = NEO_CYAN + (menu_mode_s / 3) * 32;
-
   led_set_mode(LED_FIX);
-  led_set_color_hue((led_index == 0) ? NEO_RED : color_background,
-                    (led_index == 1) ? NEO_RED : color_background,
-                    (led_index == 2) ? NEO_RED : color_background);
+  if (menu_mode_s == 0)
+  {
+    led_set_color_hue(NEO_RED, NEO_CYAN, NEO_CYAN);
+  }
+  else if (menu_mode_s == 1)
+  {
+    led_set_color_hue(NEO_CYAN, NEO_RED, NEO_CYAN);
+  }
+  else
+  {
+    led_set_color_hue(NEO_CYAN, NEO_CYAN, NEO_RED);
+  }
+}
+
+static uint8_t load_menu_mode(void)
+{
+  uint8_t stored_mode = eeprom_read_byte(MENU_MODE_STORAGE_ADDR);
+  if (stored_mode > MENU_SELECTION_LAST)
+  {
+    return 0;
+  }
+  return stored_mode;
+}
+
+static void save_menu_mode(void)
+{
+  if (menu_mode_s > MENU_SELECTION_LAST)
+  {
+    menu_mode_s = MENU_SELECTION_LAST;
+  }
+
+  eeprom_write_byte(MENU_MODE_STORAGE_ADDR, (uint8_t)menu_mode_s);
 }
 
 void keyboard_press_enc(keyboard_button_keyboard_mode_t mode)
@@ -61,6 +90,7 @@ void keyboard_press_enc(keyboard_button_keyboard_mode_t mode)
     if (enc_long_press_active_s)
     {
       current_mode_s = menu_mode_s;
+      save_menu_mode();
       led_set_mode(LED_LOOP);
     }
     else if (current_mode_s != MENU_CONF)
@@ -366,5 +396,6 @@ void keyboard_press_button(keyboard_button_t button, keyboard_button_keyboard_mo
 
 void keyboard_setup()
 {
-
+  current_mode_s = load_menu_mode();
+  menu_mode_s = current_mode_s;
 }
