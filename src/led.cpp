@@ -9,6 +9,7 @@
 static enum led_keyboard_mode_t led_mode_s = LED_LOOP;
 static int color_hue_s[3] = {0, 0, 0}; // hue value: 0..191 color map
 static int curretn_key_s = -1;         // current press key
+static volatile uint8_t mic_muted_s = 0; // cached microphone state
 
 void led_set_color_hue(uint8_t led0, uint8_t led1, uint8_t led2)
 {
@@ -30,6 +31,16 @@ void led_set_mode(enum led_keyboard_mode_t mode)
   }
 }
 
+void led_set_mic_mute_state(uint8_t muted)
+{
+  mic_muted_s = muted ? 1 : 0;
+}
+
+uint8_t led_get_mic_mute_state(void)
+{
+  return mic_muted_s;
+}
+
 // if in loop mode, change color to pressed key
 void led_presskey(int key)
 {
@@ -40,9 +51,23 @@ void led_update()
 {
   if (led_mode_s == LED_LOOP)
   {
+    uint8_t base_r = 0;
+    uint8_t base_g = 0;
+    uint8_t base_b = 0;
+
+    if (mic_muted_s)
+    {
+      base_r = 2;
+      base_g = 1;
+    }
+    else
+    {
+      base_g = 2;
+    }
+
     for (int led = 0; led < 3; led++)
     {
-      NEO_clearPixel(led);
+      NEO_writeColor(led, base_r, base_g, base_b);
     }
 
     if (curretn_key_s >= 0 && curretn_key_s < 3)

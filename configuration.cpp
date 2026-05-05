@@ -28,33 +28,13 @@ const keyboard_configuration_t configurations[NUM_CONFIGURATION] = {
                     .delay = 0             // no delay
                 }
             },
-            [ENC_CW] = { // scroll up
-                .type = BUTTON_MOUSE,
-                .function.mouse = {
-                    .mouse_event_sequence = {
-                        {
-                            .type = SCROLL_DOWN,
-                            .value = 2
-                        }
-                    },
-                    .length = 1,
-                    .delay = 0,
-                    .keypress = 0 // Valore della pressione del tasto del mouse
-                }
+            [ENC_CW] = { // volume up
+                .type = BUTTON_FUNCTION,
+                .function.functionPointer = keyboard_volume_up,
             },
-            [ENC_CCW] = {   // scroll down
-                .type = BUTTON_MOUSE,
-                .function.mouse = {
-                    .mouse_event_sequence = {
-                        {
-                            .type = SCROLL_UP,
-                            .value = 2
-                        }
-                    },
-                    .length = 1,
-                    .delay = 0,
-                    .keypress = 0 // Valore della pressione del tasto del mouse
-                }
+            [ENC_CCW] = {   // volume down
+                .type = BUTTON_FUNCTION,
+                .function.functionPointer = keyboard_volume_down,
             },
             [BTN_ENC] = {
                 .type = BUTTON_FUNCTION,
@@ -95,32 +75,12 @@ const keyboard_configuration_t configurations[NUM_CONFIGURATION] = {
                 }
             },
             [ENC_CW] = {
-                .type = BUTTON_MOUSE,
-                .function.mouse = {
-                    .mouse_event_sequence = {
-                        {
-                            .type = SCROLL_UP,
-                            .value = 1
-                        }
-                    },
-                    .length = 1,
-                    .delay = 0,
-                    .keypress = KEY_LEFT_ALT // Valore della pressione del tasto del mouse
-                }
+                .type = BUTTON_FUNCTION,
+                .function.functionPointer = keyboard_volume_up,
             },
             [ENC_CCW] = {
-                .type = BUTTON_MOUSE,
-                .function.mouse = {
-                    .mouse_event_sequence = {
-                        {
-                            .type = SCROLL_DOWN,
-                            .value = 1
-                        }
-                    },
-                    .length = 1,
-                    .delay = 0,
-                    .keypress = KEY_LEFT_ALT // Valore della pressione del tasto del mouse
-                }
+                .type = BUTTON_FUNCTION,
+                .function.functionPointer = keyboard_volume_down,
             },
             [BTN_ENC] = {
                 .type = BUTTON_FUNCTION,
@@ -250,32 +210,12 @@ const keyboard_configuration_t configurations[NUM_CONFIGURATION] = {
                 .type = BUTTON_NULL,
             },
             [ENC_CW] = {
-                .type = BUTTON_MOUSE,
-                .function.mouse = {
-                    .mouse_event_sequence = {
-                        {
-                            .type = SCROLL_UP,
-                            .value = 1
-                        }
-                    },
-                    .length = 1,
-                    .delay = 0,
-                    .keypress = 0 // Valore della pressione del tasto del mouse
-                }
+                .type = BUTTON_FUNCTION,
+                .function.functionPointer = keyboard_volume_up,
             },
             [ENC_CCW] = {
-                .type = BUTTON_MOUSE,
-                .function.mouse = {
-                    .mouse_event_sequence = {
-                        {
-                            .type = SCROLL_DOWN,
-                            .value = 1
-                        }
-                    },
-                    .length = 1,
-                    .delay = 0,
-                    .keypress = 0 // Valore della pressione del tasto del mouse
-                }
+                .type = BUTTON_FUNCTION,
+                .function.functionPointer = keyboard_volume_down,
             },
             [BTN_ENC] = {
                 .type = BUTTON_FUNCTION,

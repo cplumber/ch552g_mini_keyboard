@@ -5,6 +5,7 @@
 #include "USBhandler.h"
 
 #include "USBconstant.h"
+#include "../led.h"
 
 // Keyboard functions:
 
@@ -55,6 +56,22 @@ void USB_EP0_SETUP() {
       }
       case USB_REQ_TYP_CLASS: {
         switch (SetupReq) {
+        case 0x09: { // HID SET_REPORT
+          if (UsbSetupBuf->wValueH == 0x02 &&
+              UsbSetupBuf->wValueL == 0x03) {
+            extern __xdata uint8_t ep0_set_report_pending_s;
+            ep0_set_report_pending_s = 1;
+            len = 0;
+          } else if (UsbSetupBuf->wValueH == 0x03 &&
+                     UsbSetupBuf->wValueL == 0x05) {
+            extern __xdata uint8_t ep0_set_report_pending_s;
+            ep0_set_report_pending_s = 1;
+            len = 0;
+          } else {
+            len = 0xFF; // command not supported
+          }
+          break;
+        }
         default:
           len = 0xFF; // command not supported
           break;
@@ -327,6 +344,19 @@ void USB_EP0_IN() {
 
 void USB_EP0_OUT() {
   {
+    extern __xdata uint8_t ep0_set_report_pending_s;
+    if (ep0_set_report_pending_s) {
+      if (USB_RX_LEN >= 2 && Ep0Buffer[0] == 5) {
+        if (Ep0Buffer[1] <= 1) {
+          led_set_mic_mute_state(Ep0Buffer[1] ? 1 : 0);
+        }
+      } else if (USB_RX_LEN >= 2 && Ep0Buffer[0] == 3) {
+        if (Ep0Buffer[1] <= 1) {
+          led_set_mic_mute_state(Ep0Buffer[1] ? 1 : 0);
+        }
+      }
+      ep0_set_report_pending_s = 0;
+    }
     UEP0_T_LEN = 0;
     UEP0_CTRL |= UEP_R_RES_ACK | UEP_T_RES_NAK; // Respond Nak
   }

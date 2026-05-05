@@ -1,4 +1,7 @@
 #pragma once
+
+#include <stdint.h>
+
 // Key colors (hue value: 0..191)
 #define NEO_RED 0    // red
 #define NEO_YEL 32   // yellow
@@ -21,6 +24,18 @@ void led_set_mode(enum led_keyboard_mode_t mode);
 
 // set led color in FIX mode
 void led_set_color_hue(uint8_t led0, uint8_t led1, uint8_t led2);
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+// update the cached mic mute state for the normal LED mode
+void led_set_mic_mute_state(uint8_t muted);
+
+// optional C-callable accessor for the USB bridge
+uint8_t led_get_mic_mute_state(void);
+#ifdef __cplusplus
+}
+#endif
 
 // update led task
 void led_update();

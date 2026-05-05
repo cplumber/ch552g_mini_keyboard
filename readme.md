@@ -11,6 +11,9 @@ I decided to open it and try to program it myself.
 
 Change keyboard config by holding the encoder for 3 seconds, then rotating it
 
+In the normal configs, encoder rotation controls system volume up/down. The menu config still uses the encoder for config selection.
+Short encoder click toggles the mic mute through the Windows bridge.
+
 
 ## What's Inside
 
@@ -105,11 +108,12 @@ Current configuration
 
 | Config | BTN 1 | BTN 2 | BTN 3 | Encoder CW | Encoder CCW | Encoder press |
 | --- | --- | --- | --- | --- | --- | --- |
-| Copy / paste | `Ctrl+C` | `Ctrl+V` | `Ctrl+Z` | `Scroll down x2` | `Scroll up x2` | Hold `2s` for menu |
-| Photoshop | `E` | `S` | `Alt + Left click` | `Alt + Scroll up` | `Alt + Scroll down` | Hold `2s` for menu |
-| Game | `A x4` | `B x8` | `5x Left click` | `Alt + Scroll up` | `Alt + Scroll down` | Hold `2s` for menu |
+| Copy / paste | `Ctrl+C` | `Ctrl+V` | `Ctrl+Z` | `Volume up` | `Volume down` | Short click: mic mute, hold `2s`: menu |
+| Photoshop | `E` | `S` | `Alt + Left click` | `Volume up` | `Volume down` | Short click: mic mute, hold `2s`: menu |
+| Game | `A x4` | `B x8` | `5x Left click` | `Volume up` | `Volume down` | Short click: mic mute, hold `2s`: menu |
+| Auto keyboard | Auto type `Hello World` | Auto mouse square | `Unused` | `Volume up` | `Volume down` | Short click: mic mute, hold `2s`: menu |
 
-The menu config uses the encoder to move through the list; the three main configs above are the ones you normally use day to day.
+The menu config uses the encoder to move through the list; the four rows above are the normal working configs.
 
 ## Pinout
 
@@ -133,6 +137,11 @@ Here are the resources I used for reprogramming the firmware:
 - [CH552G Product Page](https://www.esclabs.in/product/ch552g-8-bit-usb-device-microcontroller/)
 - [LCSC Product Page](https://www.lcsc.com/product-detail/Microcontroller-Units-MCUs-MPUs-SOCs_WCH-Jiangsu-Qin-Heng-CH552G_C111292.html?utm_source=digipart&utm_medium=cpc&utm_campaign=CH552G)
 - [CH552G Datasheet](http://www.wch-ic.com/downloads/file/309.html)
+
+
+## Windows Mic Mute Bridge
+
+A separate C++ helper lives in [`mic_mute_bridge/`](mic_mute_bridge/). It listens for `F24` and toggles the default Windows microphone mute state through Core Audio. The helper also sends the current mic state back to the MCU so the LEDs show very low green when the mic is live and very low yellow when muted. The encoder short click emits `F24`; the 2-second hold still opens the menu.
 
 
 # License

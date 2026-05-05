@@ -71,5 +71,5 @@ void loop()
   led_update();
 
   //debouncing
-  delay(5); 
+  delay(1); 
 }

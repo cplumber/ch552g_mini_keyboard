@@ -100,6 +100,10 @@ void keyboard_update(void);
 // keyboard encoder press to enter in menu
 void keyboard_press_enc(keyboard_button_keyboard_mode_t mode);
 
+// keyboard encoder rotation helpers
+void keyboard_volume_up(keyboard_button_keyboard_mode_t mode);
+void keyboard_volume_down(keyboard_button_keyboard_mode_t mode);
+
 // keyboard menu scroll uo
 void button_menu_up(keyboard_button_keyboard_mode_t mode);
 

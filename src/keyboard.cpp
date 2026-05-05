@@ -60,7 +60,29 @@ void keyboard_press_enc(keyboard_button_keyboard_mode_t mode)
       current_mode_s = menu_mode_s;
       led_set_mode(LED_LOOP);
     }
+    else if (current_mode_s != MENU_CONF)
+    {
+      // Global short-click action: the Windows helper listens for F24.
+      led_set_mic_mute_state(!led_get_mic_mute_state());
+      Keyboard_write(KEY_F24);
+    }
     enc_pressed_s = false;
+  }
+}
+
+void keyboard_volume_up(keyboard_button_keyboard_mode_t mode)
+{
+  if (mode != BTM_RELEASE)
+  {
+    Consumer_click(CONSUMER_VOLUME_UP);
+  }
+}
+
+void keyboard_volume_down(keyboard_button_keyboard_mode_t mode)
+{
+  if (mode != BTM_RELEASE)
+  {
+    Consumer_click(CONSUMER_VOLUME_DOWN);
   }
 }
 

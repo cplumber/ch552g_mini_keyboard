@@ -82,6 +82,13 @@ uint8_t Mouse_click(__data uint8_t k);
 uint8_t Mouse_move(__data int8_t x, __xdata int8_t y);
 uint8_t Mouse_scroll(__data int8_t tilt);
 
+// consumer control media keys
+#define CONSUMER_VOLUME_UP 0x01
+#define CONSUMER_VOLUME_DOWN 0x02
+uint8_t Consumer_press(__data uint8_t k);
+uint8_t Consumer_release(__data uint8_t k);
+uint8_t Consumer_click(__data uint8_t k);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
