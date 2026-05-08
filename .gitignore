@@ -1,2 +1,4 @@
 build/
 mic_mute_bridge/build/
+.venv/
+readme.html

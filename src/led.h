@@ -10,7 +10,7 @@
 #define NEO_BLUE 128 // blue
 #define NEO_MAG 160  // magenta
 #define NEO_WHITE 191  // white
-#define NEO_BRIGHT_KEYS 2
+#define NEO_BRIGHT_KEYS 0
 
 enum led_keyboard_mode_t
 {

@@ -110,6 +110,7 @@ const keyboard_configuration_t configurations[NUM_CONFIGURATION] = {
             },
         }
     },
+    /*
     {   // Reserved slot
         .button = {
             [BTN_1] = {
@@ -135,6 +136,7 @@ const keyboard_configuration_t configurations[NUM_CONFIGURATION] = {
             },
         }
     },
+    */
     {   //Menu configuration
         .button = { // Configurtion copy paste keyboard
             [BTN_1] = {

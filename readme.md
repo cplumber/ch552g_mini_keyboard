@@ -44,6 +44,45 @@ This firmware uses the Arduino platform to simplify the build process. I built i
 5. Set the keyboard in bootloader mode (see below).
 6. Flash the project. (*Original firmware will be completed lost*)
 
+### Command-line build
+
+If you want a repeatable build that is easy to tweak later, use [`scripts/build.ps1`](scripts/build.ps1).
+
+```powershell
+pwsh -File .\scripts\build.ps1
+```
+
+The script automatically looks for the bundled `arduino-cli.exe` inside the Arduino IDE install, and it writes the build output to `build/cli/`.
+
+If you want to change the board settings later, edit the default `-Fqbn` value at the top of the script or pass a new one on the command line.
+
+```powershell
+pwsh -File .\scripts\build.ps1 -Fqbn 'CH55xDuino:mcs51:ch552:clock=16internal,usb_settings=user148,upload_method=usb,bootloader_pin=p36'
+```
+
+Useful script knobs:
+
+- `-SketchPath`: path to the `.ino` file if the project moves.
+- `-BuildPath`: where the `.hex` and `.elf` files are written.
+- `-Fqbn`: the CH55xDuino board/menu selection.
+- `-ArduinoCliPath`: override the CLI path if Arduino IDE is installed somewhere unusual.
+
+### Memory map report
+
+After a build, use [`scripts/map-report.ps1`](scripts/map-report.ps1) to see where flash and RAM go.
+
+```powershell
+pwsh -File .\scripts\map-report.ps1
+```
+
+The report reads `build/cli/ch552g_mini_keyboard.ino.map` and `build/cli/ch552g_mini_keyboard.ino.mem`, then prints:
+
+- section totals
+- top RAM symbols and modules
+- top flash symbols and modules
+
+For this project, `XSEG` and `XISEG` are the main external RAM sections that count toward the `72%` memory figure in the build output. `CSEG` and `CONST` are the big flash sections to watch when you want to trim program size.
+
 ## Setting up the Keyboard in Bootloader Mode
 
 To enter bootloader mode, CH552G require connect pin P3.6 to vcc with a 10K pull-up resistor. To do this:
@@ -110,7 +149,7 @@ Current configuration
 | --- | --- | --- | --- | --- | --- | --- |
 | Copy / paste | `Ctrl+C` | `Ctrl+V` | `Ctrl+Z` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
 | Google Meet | `Ctrl+D` | `Ctrl+E` | `Ctrl+Alt+H` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
-| VS Code | `Ctrl+Shift+E` | `Ctrl+Shift+G`, then `G` | `Ctrl+\`` | `Alt+Tab` held for `1s` | `Alt+Shift+Tab` held for `1s` | Short click: mic mute, hold `1s`: menu |
+| VS Code | `Ctrl+Shift+E` | `Ctrl+Shift+G`, then `G` | `Ctrl+backtick` | `Alt+Tab` held for `1s` | `Alt+Shift+Tab` held for `1s` | Short click: mic mute, hold `1s`: menu |
 
 The menu config uses the encoder to move through the first 3 configs; the selected profile is saved in DataFlash, so it survives power cycles.
 
