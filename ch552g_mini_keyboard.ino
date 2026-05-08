@@ -56,6 +56,7 @@ void setup()
   encoder_setup(ENCODER_A, ENCODER_B);
   led_set_mode(LED_LOOP);
   USBInit();
+  Keyboard_releaseAll();
 }
 
 

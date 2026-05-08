@@ -90,6 +90,8 @@ void keyboard_press_enc(keyboard_button_keyboard_mode_t mode)
     if (enc_long_press_active_s)
     {
       current_mode_s = menu_mode_s;
+      Keyboard_releaseAll();
+      vscode_alt_held_s = false;
       save_menu_mode();
       led_set_mode(LED_LOOP);
     }
