@@ -1,6 +1,6 @@
 param(
     [string]$SketchPath = (Join-Path $PSScriptRoot '..\ch552g_mini_keyboard.ino'),
-    [string]$BuildPath = (Join-Path $PSScriptRoot '..\build\cli'),
+    [string]$BuildPath = (Join-Path $PSScriptRoot '..\build\CH55xDuino.mcs51.ch552'),
     [string]$Fqbn = 'CH55xDuino:mcs51:ch552:clock=16internal,usb_settings=user148,upload_method=usb,bootloader_pin=p36',
     [string]$ArduinoCliPath = ''
 )

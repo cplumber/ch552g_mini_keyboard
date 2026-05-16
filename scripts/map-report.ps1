@@ -1,6 +1,6 @@
 param(
-    [string]$MapPath = (Join-Path $PSScriptRoot '..\build\cli\ch552g_mini_keyboard.ino.map'),
-    [string]$MemPath = (Join-Path $PSScriptRoot '..\build\cli\ch552g_mini_keyboard.ino.mem'),
+    [string]$MapPath = (Join-Path $PSScriptRoot '..\build\CH55xDuino.mcs51.ch552\ch552g_mini_keyboard.ino.map'),
+    [string]$MemPath = (Join-Path $PSScriptRoot '..\build\CH55xDuino.mcs51.ch552\ch552g_mini_keyboard.ino.mem'),
     [int]$Top = 12
 )
 

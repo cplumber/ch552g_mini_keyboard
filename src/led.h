@@ -12,24 +12,31 @@
 #define NEO_WHITE 191  // white
 #define NEO_BRIGHT_KEYS 0
 
+#define LED_0 0 // farthest from rotary switch, kept off
+#define LED_1 1 // middle LED, menu/profile selection
+#define LED_2 2 // closest to rotary switch, mic mute/live
+
 enum led_keyboard_mode_t
 {
   LED_LOOP,
-  LED_FIX,
-  LED_BLINK
+  LED_MENU,
+  LED_AUTO
 };
 
 // change led mode
 void led_set_mode(enum led_keyboard_mode_t mode);
 
-// set led color in FIX mode
-void led_set_color_hue(uint8_t led0, uint8_t led1, uint8_t led2);
+// set the auto-mode indicator hue for the menu/status LED
+void led_set_auto_hue(uint8_t hue);
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 // update the cached mic mute state for the normal LED mode
 void led_set_mic_mute_state(uint8_t muted);
+
+// set the selected profile indicator for menu mode
+void led_set_menu_profile(uint8_t profile);
 
 // blank LEDs while the USB bus is suspended
 void led_set_usb_suspended(uint8_t suspended);

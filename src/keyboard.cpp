@@ -42,19 +42,8 @@ const button_function_t button_function_null = {
 
 static void set_menu_led(void)
 {
-  led_set_mode(LED_FIX);
-  if (menu_mode_s == 0)
-  {
-    led_set_color_hue(NEO_RED, NEO_CYAN, NEO_CYAN);
-  }
-  else if (menu_mode_s == 1)
-  {
-    led_set_color_hue(NEO_CYAN, NEO_RED, NEO_CYAN);
-  }
-  else
-  {
-    led_set_color_hue(NEO_CYAN, NEO_CYAN, NEO_RED);
-  }
+  led_set_mode(LED_MENU);
+  led_set_menu_profile((uint8_t)menu_mode_s);
 }
 
 static uint8_t load_menu_mode(void)

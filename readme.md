@@ -1,7 +1,7 @@
 # USB Mini Keyboard with CH552G
 
 ## Introduction
-This project began with the purchase of a compact USB keyboard with three keys from AliExpress, seemingly without any specific purpose in mind. The original software required for this keyboard was provided as a .exe file, which I downloaded from a Google Drive repository. However, since I don't have access to a Windows PC to test it, I'm quite certain that most antivirus software would not approve of it.
+This project began with the purchase of a compact USB keyboard with three keys from AliExpress, seemingly without any specific purpose in mind. The original software required for this keyboard was provided as a `.exe` file, which I downloaded from a Google Drive repository. Since I rebuilt the firmware myself, the board now behaves as a small CH552G macropad with a rotary encoder, a Windows mic-mute bridge, and profile selection stored in DataFlash.
 
 I decided to open it and try to program it myself.
 
@@ -9,15 +9,14 @@ I decided to open it and try to program it myself.
 
 ![Menu](img/key_menu.gif?raw=true)
 
-Change keyboard config by holding the encoder for 1 second, then rotating it
+Hold the encoder for 1 second to enter the menu, then rotate it to choose a profile.
 
-In the normal configs, encoder rotation controls system volume up/down. The menu config still uses the encoder for config selection.
-Short encoder click toggles the mic mute through the Windows bridge.
+In the normal profiles, encoder rotation controls system volume up/down. The menu profile uses the encoder for profile selection. Short encoder click toggles the Windows microphone mute through the bridge.
 
 
 ## What's Inside
 
-The core of the board features a wch-ic CH552G microcontroller, three buttons, a rotary encoder, and three addressable LEDs.
+The core of the board features a WCH CH552G microcontroller, three buttons, a rotary encoder, and three addressable LEDs. The firmware uses LED 2, the pixel closest to the rotary switch, for mic mute/live state, LED 1 for menu/profile selection, and leaves LED 0 off.
 
 ![Bottom](img/bottom.jpeg?raw=true)
 
@@ -49,21 +48,21 @@ This firmware uses the Arduino platform to simplify the build process. I built i
 If you want a repeatable build that is easy to tweak later, use [`scripts/build.ps1`](scripts/build.ps1).
 
 ```powershell
-pwsh -File .\scripts\build.ps1
+powershell -File .\scripts\build.ps1
 ```
 
-The script automatically looks for the bundled `arduino-cli.exe` inside the Arduino IDE install, and it writes the build output to `build/cli/`.
+The script automatically looks for the bundled `arduino-cli.exe` inside the Arduino IDE install, and it writes the build output to `build/CH55xDuino.mcs51.ch552/`.
 
 If you want to change the board settings later, edit the default `-Fqbn` value at the top of the script or pass a new one on the command line.
 
 ```powershell
-pwsh -File .\scripts\build.ps1 -Fqbn 'CH55xDuino:mcs51:ch552:clock=16internal,usb_settings=user148,upload_method=usb,bootloader_pin=p36'
+powershell -File .\scripts\build.ps1 -Fqbn 'CH55xDuino:mcs51:ch552:clock=16internal,usb_settings=user148,upload_method=usb,bootloader_pin=p36'
 ```
 
 Useful script knobs:
 
 - `-SketchPath`: path to the `.ino` file if the project moves.
-- `-BuildPath`: where the `.hex` and `.elf` files are written.
+- `-BuildPath`: where the `.hex`, `.elf`, and map files are written.
 - `-Fqbn`: the CH55xDuino board/menu selection.
 - `-ArduinoCliPath`: override the CLI path if Arduino IDE is installed somewhere unusual.
 
@@ -72,16 +71,16 @@ Useful script knobs:
 After a build, use [`scripts/map-report.ps1`](scripts/map-report.ps1) to see where flash and RAM go.
 
 ```powershell
-pwsh -File .\scripts\map-report.ps1
+powershell -File .\scripts\map-report.ps1
 ```
 
-The report reads `build/cli/ch552g_mini_keyboard.ino.map` and `build/cli/ch552g_mini_keyboard.ino.mem`, then prints:
+The report reads `build/CH55xDuino.mcs51.ch552/ch552g_mini_keyboard.ino.map` and `build/CH55xDuino.mcs51.ch552/ch552g_mini_keyboard.ino.mem`, then prints:
 
 - section totals
 - top RAM symbols and modules
 - top flash symbols and modules
 
-For this project, `XSEG` and `XISEG` are the main external RAM sections that count toward the `72%` memory figure in the build output. `CSEG` and `CONST` are the big flash sections to watch when you want to trim program size.
+For this project, `XSEG` and `XISEG` are the main external RAM sections that count toward the memory figure in the build output. `CSEG` and `CONST` are the big flash sections to watch when you want to trim program size.
 
 ## Setting up the Keyboard in Bootloader Mode
 
@@ -119,39 +118,29 @@ Use this as the fallback method if the default P3.6-to-VCC bootloader path does 
 1. Hold the encoder button.
 2. Plug USB.
 
-```C
-  // Go in bootloader more if connected with encoder button pressed
-  if (!digitalRead(PIN_BTN_ENC))
-  {
-    NEO_writeHue(0, NEO_CYAN, NEO_BRIGHT_KEYS); // set led1 to cyan
-    NEO_writeHue(1, NEO_BLUE, NEO_BRIGHT_KEYS); // set led2 to blue
-    NEO_writeHue(2, NEO_MAG, NEO_BRIGHT_KEYS); //  set led3 to magenta
-    NEO_update();                              // update pixels
-    BOOT_now();     // jump to bootloader
-  }
-```
+The bootloader check lives in [`ch552g_mini_keyboard.ino`](ch552g_mini_keyboard.ino). When the encoder button is held during startup, the firmware flashes the three LEDs, then jumps into bootloader mode.
 
 
 
 # Firmware feature
 
 This firmware can set up the keyboard in different configurations.
-Edit configuration.cpp to change it
+Edit `configuration.cpp` to change them.
 To change configuration, long-press the rotary encoder for 1 second, then rotate it.
 
-On configurtion is possible to send keyboard or mous event and setup automatic cycle rutine
+Profiles can send keyboard events, mouse events, or start automatic cycle routines.
 
 ![Menu](img/key_menu.gif?raw=true)
 
 Current configuration
 
-| Config | BTN 1 | BTN 2 | BTN 3 | Encoder CW | Encoder CCW | Encoder press |
-| --- | --- | --- | --- | --- | --- | --- |
-| Copy / paste | `Ctrl+C` | `Ctrl+V` | `Ctrl+Z` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
-| Google Meet | `Ctrl+D` | `Ctrl+E` | `Ctrl+Alt+H` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
-| VS Code | `Ctrl+Shift+E` | `Ctrl+Shift+G`, then `G` | `Ctrl+backtick` | `Alt+Tab` held for `1s` | `Alt+Shift+Tab` held for `1s` | Short click: mic mute, hold `1s`: menu |
+| Config | Menu LED color | BTN 1 | BTN 2 | BTN 3 | Encoder CW | Encoder CCW | Encoder press |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Copy / paste | Red | `Ctrl+C` | `Ctrl+V` | `Ctrl+Z` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
+| Google Meet | Yellow | `Ctrl+D` | `Ctrl+E` | `Ctrl+Alt+H` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
+| VS Code | Green | `Ctrl+Shift+E` | `Ctrl+Shift+G`, then `G` | `Ctrl+backtick` | `Alt+Tab` held for `1s` | `Alt+Shift+Tab` held for `1s` | Short click: mic mute, hold `1s`: menu |
 
-The menu config uses the encoder to move through the first 3 configs; the selected profile is saved in DataFlash, so it survives power cycles.
+The menu profile uses the encoder to move through the three user profiles; the selected profile is saved in DataFlash, so it survives power cycles.
 
 ## Pinout
 
@@ -161,7 +150,10 @@ The menu config uses the encoder to move through the first 3 configs; the select
 - BUTTON R: P33
 - ENCODER A: P31
 - ENCODER B: P30
-- LED: P34
+- LED strip data: P34
+- LED 0: farthest from rotary switch, unused/off
+- LED 1: middle LED, menu/profile indicator
+- LED 2: closest to rotary switch, mic mute/live indicator
 
 ## Additional resources
 
@@ -179,7 +171,7 @@ Here are the resources I used for reprogramming the firmware:
 
 ## Windows Mic Mute Bridge
 
-A separate C++ helper lives in [`mic_mute_bridge/`](mic_mute_bridge/). It listens for `F24` and toggles the default Windows microphone mute state through Core Audio. The helper also sends the current mic state back to the MCU so the LEDs show very low green when the mic is live and very low yellow when muted. The encoder short click emits `F24`; the 2-second hold still opens the menu.
+A separate C++ helper lives in [`mic_mute_bridge/`](mic_mute_bridge/). It listens for `F24` and toggles the default Windows microphone mute state through Core Audio. The helper also sends the current mic state back to the MCU so the mic LED stays in sync with Windows: solid green when live and slow-blinking yellow when muted. The encoder short click emits `F24`; the 2-second hold still opens the menu.
 
 
 # License

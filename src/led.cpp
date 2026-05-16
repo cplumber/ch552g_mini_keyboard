@@ -2,39 +2,94 @@
 #include "neo/neo.h"
 #include "led.h"
 
-// ===================================================================================
-// Color section
-// ============================================================================
-
 static enum led_keyboard_mode_t led_mode_s = LED_LOOP;
-static int color_hue_s[3] = {0, 0, 0}; // hue value: 0..191 color map
-static int curretn_key_s = -1;         // current press key
+static uint8_t menu_profile_s = 0;
+static uint8_t auto_hue_s = NEO_GREEN;
 static volatile uint8_t mic_muted_s = 0; // cached microphone state
 static volatile uint8_t usb_suspended_s = 0;
+static unsigned long mic_blink_last_toggle_ms_s = 0;
+static uint8_t mic_blink_visible_s = 1;
 
-void led_set_color_hue(uint8_t led0, uint8_t led1, uint8_t led2)
+static const uint8_t menu_palette_s[] = {
+    NEO_RED,
+    NEO_YEL,
+    NEO_GREEN,
+    NEO_CYAN,
+    NEO_BLUE,
+    NEO_MAG,
+    NEO_WHITE,
+};
+
+static void set_pixel_off(uint8_t pixel)
 {
-  color_hue_s[0] = led0;
-  color_hue_s[1] = led1;
-  color_hue_s[2] = led2;
+  NEO_writeColor(pixel, 0, 0, 0);
+}
+
+static void render_mic_pixel(void)
+{
+  if (mic_muted_s)
+  {
+    const unsigned long now = millis();
+    if ((unsigned long)(now - mic_blink_last_toggle_ms_s) >= 500UL)
+    {
+      mic_blink_visible_s = !mic_blink_visible_s;
+      mic_blink_last_toggle_ms_s = now;
+    }
+
+    if (mic_blink_visible_s)
+    {
+      NEO_writeColor(LED_2, 2, 1, 0);
+    }
+    else
+    {
+      set_pixel_off(LED_2);
+    }
+    return;
+  }
+
+  mic_blink_visible_s = 1;
+  mic_blink_last_toggle_ms_s = millis();
+  NEO_writeColor(LED_2, 0, 2, 0);
+}
+
+static void render_menu_pixel(void)
+{
+  if (led_mode_s == LED_MENU || led_mode_s == LED_LOOP)
+  {
+    const uint8_t index = menu_profile_s % (sizeof(menu_palette_s) / sizeof(menu_palette_s[0]));
+    NEO_writeHue(LED_1, menu_palette_s[index], 0); // lowest possible brightness
+    return;
+  }
+
+  if (led_mode_s == LED_AUTO)
+  {
+    NEO_writeHue(LED_1, auto_hue_s, NEO_BRIGHT_KEYS);
+    return;
+  }
+
+  set_pixel_off(LED_1);
 }
 
 void led_set_mode(enum led_keyboard_mode_t mode)
 {
   led_mode_s = mode;
-  switch (mode)
-  {
-  case LED_LOOP:
-    color_hue_s[0] = NEO_RED;
-    color_hue_s[1] = NEO_YEL;
-    color_hue_s[2] = NEO_GREEN;
-    break;
-  }
+}
+
+void led_set_auto_hue(uint8_t hue)
+{
+  auto_hue_s = hue;
 }
 
 void led_set_mic_mute_state(uint8_t muted)
 {
   mic_muted_s = muted ? 1 : 0;
+  mic_blink_visible_s = 1;
+  mic_blink_last_toggle_ms_s = millis();
+}
+
+void led_set_menu_profile(uint8_t profile)
+{
+  menu_profile_s = profile;
 }
 
 void led_set_usb_suspended(uint8_t suspended)
@@ -47,64 +102,26 @@ uint8_t led_get_mic_mute_state(void)
   return mic_muted_s;
 }
 
-// if in loop mode, change color to pressed key
 void led_presskey(int key)
 {
-  curretn_key_s = key;
+  (void)key;
 }
 
 void led_update()
 {
   if (usb_suspended_s)
   {
-    for (int led = 0; led < 3; led++)
+    for (uint8_t led = 0; led < 3; led++)
     {
-      NEO_writeColor(led, 0, 0, 0);
+      set_pixel_off(led);
     }
     NEO_update();
     return;
   }
 
-  if (led_mode_s == LED_LOOP)
-  {
-    uint8_t base_r = 0;
-    uint8_t base_g = 0;
-    uint8_t base_b = 0;
-
-    if (mic_muted_s)
-    {
-      base_r = 2;
-      base_g = 1;
-    }
-    else
-    {
-      base_g = 2;
-    }
-
-    for (int led = 0; led < 3; led++)
-    {
-      NEO_writeColor(led, base_r, base_g, base_b);
-    }
-
-    if (curretn_key_s >= 0 && curretn_key_s < 3)
-    {
-      NEO_writeColor(curretn_key_s, 1, 1, 1);
-    }
-  }
-  else
-  {
-    for (int led = 0; led < 3; led++)
-    {
-      if (curretn_key_s == led)
-      {
-        NEO_writeColor(led, 255, 255, 255);
-      }
-      else
-      {
-        NEO_writeHue(led, color_hue_s[led], NEO_BRIGHT_KEYS);
-      }
-    }
-  }
+  render_mic_pixel();
+  render_menu_pixel();
+  set_pixel_off(LED_0);
 
   NEO_update();
 }
