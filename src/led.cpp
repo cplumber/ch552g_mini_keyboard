@@ -4,7 +4,6 @@
 
 static enum led_keyboard_mode_t led_mode_s = LED_LOOP;
 static uint8_t menu_profile_s = 0;
-static uint8_t auto_hue_s = NEO_GREEN;
 static volatile uint8_t mic_muted_s = 0; // cached microphone state
 static volatile uint8_t usb_suspended_s = 0;
 static unsigned long mic_blink_last_toggle_ms_s = 0;
@@ -70,7 +69,7 @@ static void render_mic_pixel(void)
 
   mic_blink_visible_s = 1;
   mic_blink_last_toggle_ms_s = millis();
-  NEO_writeColor(LED_2, 0, 2, 0);
+  NEO_writeColor(LED_2, 0, 1, 0);
 }
 
 static void render_menu_pixel(void)
@@ -82,23 +81,12 @@ static void render_menu_pixel(void)
     return;
   }
 
-  if (led_mode_s == LED_AUTO)
-  {
-    NEO_writeHue(LED_1, auto_hue_s, NEO_BRIGHT_KEYS);
-    return;
-  }
-
   set_pixel_off(LED_1);
 }
 
 void led_set_mode(enum led_keyboard_mode_t mode)
 {
   led_mode_s = mode;
-}
-
-void led_set_auto_hue(uint8_t hue)
-{
-  auto_hue_s = hue;
 }
 
 void led_set_mic_mute_state(uint8_t muted)

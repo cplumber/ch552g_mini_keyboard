@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#include "userUsbHidKeyboardMouse/USBHIDKeyboardMouse.h"
 #include "keyboard.h"
 #include "util.h"
 #include "buttons.h"
@@ -100,6 +101,8 @@ void buttons_update(void)
     if (btEncActive_s  && bt1Active_s  && bt2Active_s  && bt3Active_s)
     {
         // go in bootloader mode if press all buttons
+        Keyboard_releaseAll();
+        delay(20);
         BOOT_now();
     }
 }

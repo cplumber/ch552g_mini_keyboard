@@ -128,7 +128,7 @@ This firmware can set up the keyboard in different configurations.
 Edit `configuration.cpp` to change them.
 To change configuration, long-press the rotary encoder for 1 second, then rotate it.
 
-Profiles can send keyboard events, mouse events, or start automatic cycle routines.
+Profiles can send keyboard events, mouse events, or start automatic cycle routines. Those automatic routines no longer claim a dedicated LED mode; the normal mic and profile indicators stay in place.
 
 ![Menu](img/key_menu.gif?raw=true)
 

@@ -41,7 +41,7 @@ Mic indicator rules:
 
 - [`src/led.cpp`](src/led.cpp) for LED rendering, menu colors, and blink timing
 - [`src/keyboard.cpp`](src/keyboard.cpp) for menu selection and encoder logic
-- [`src/auto_mode.cpp`](src/auto_mode.cpp) for auto-sequence LED hints
+- [`src/auto_mode.cpp`](src/auto_mode.cpp) for auto-sequence routines
 - [`src/userUsbHidKeyboardMouse/USBhandler.c`](src/userUsbHidKeyboardMouse/USBhandler.c) and [`src/userUsbHidKeyboardMouse/USBHIDKeyboardMouse.c`](src/userUsbHidKeyboardMouse/USBHIDKeyboardMouse.c) for USB report handling
 - [`mic_mute_bridge/main.cpp`](mic_mute_bridge/main.cpp) for Windows Core Audio mute sync
 - [`configuration.cpp`](configuration.cpp) for profile definitions

@@ -19,15 +19,11 @@
 enum led_keyboard_mode_t
 {
   LED_LOOP,
-  LED_MENU,
-  LED_AUTO
+  LED_MENU
 };
 
 // change led mode
 void led_set_mode(enum led_keyboard_mode_t mode);
-
-// set the auto-mode indicator hue for the menu/status LED
-void led_set_auto_hue(uint8_t hue);
 
 #ifdef __cplusplus
 extern "C" {

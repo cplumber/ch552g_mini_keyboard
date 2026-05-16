@@ -48,6 +48,8 @@ void setup()
     NEO_writeHue(1, NEO_BLUE, NEO_BRIGHT_KEYS); // set led2 to blue
     NEO_writeHue(2, NEO_MAG, NEO_BRIGHT_KEYS); //  set led3 to magenta
     NEO_update();                              // update pixels
+    Keyboard_releaseAll();
+    delay(20);
     BOOT_now();     // jump to bootloader
   }
 
