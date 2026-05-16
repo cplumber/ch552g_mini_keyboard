@@ -20,9 +20,30 @@ static const uint8_t menu_palette_s[] = {
     NEO_WHITE,
 };
 
+static const uint8_t menu_rgb_s[][3] = {
+    {1, 0, 0}, // red
+    {1, 1, 0}, // yellow
+    {0, 1, 0}, // green
+    {0, 1, 1}, // cyan
+    {0, 0, 1}, // blue
+    {1, 0, 1}, // magenta
+    {1, 1, 1}, // white
+};
+
+static const uint8_t menu_brightness_s = 32;
+static const uint8_t selected_brightness_s = 1;
+
 static void set_pixel_off(uint8_t pixel)
 {
   NEO_writeColor(pixel, 0, 0, 0);
+}
+
+static void write_menu_rgb(uint8_t index, uint8_t brightness)
+{
+  NEO_writeColor(LED_1,
+                 menu_rgb_s[index][0] * brightness,
+                 menu_rgb_s[index][1] * brightness,
+                 menu_rgb_s[index][2] * brightness);
 }
 
 static void render_mic_pixel(void)
@@ -57,7 +78,7 @@ static void render_menu_pixel(void)
   if (led_mode_s == LED_MENU || led_mode_s == LED_LOOP)
   {
     const uint8_t index = menu_profile_s % (sizeof(menu_palette_s) / sizeof(menu_palette_s[0]));
-    NEO_writeHue(LED_1, menu_palette_s[index], 0); // lowest possible brightness
+    write_menu_rgb(index, led_mode_s == LED_MENU ? menu_brightness_s : selected_brightness_s);
     return;
   }
 
