@@ -409,4 +409,5 @@ void keyboard_setup()
 {
   current_mode_s = load_menu_mode();
   menu_mode_s = current_mode_s;
+  led_set_menu_profile((uint8_t)current_mode_s);
 }
