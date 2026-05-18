@@ -81,12 +81,8 @@ const keyboard_configuration_t configurations[NUM_CONFIGURATION] = {
     {   // Configuration VS Code
         .button = {
             [BTN_1] = {
-                .type = BUTTON_SEQUENCE,
-                .function.sequence = {
-                    .sequence = {KEY_LEFT_CTRL, KEY_LEFT_SHIFT, 'e'}, // explorer
-                    .length = 3,
-                    .delay = 0
-                }
+                .type = BUTTON_FUNCTION,
+                .function.functionPointer = keyboard_vscode_preview,
             },
             [BTN_2] = {
                 .type = BUTTON_FUNCTION,

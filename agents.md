@@ -23,6 +23,7 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
   - Copy / paste = red
   - Google Meet = yellow
   - VS Code = green
+- VS Code `BTN_1` sends the preview chord `Ctrl+K`, then `V`.
 
 ## LED Rules
 

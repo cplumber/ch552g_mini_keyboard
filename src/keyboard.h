@@ -116,6 +116,9 @@ void keyboard_meet_raise_hand(keyboard_button_keyboard_mode_t mode);
 // VS Code terminal toggle
 void keyboard_vscode_toggle_terminal(keyboard_button_keyboard_mode_t mode);
 
+// VS Code preview file chord: Ctrl+K, then V
+void keyboard_vscode_preview(keyboard_button_keyboard_mode_t mode);
+
 // VS Code source control focus
 void keyboard_vscode_source_control(keyboard_button_keyboard_mode_t mode);
 

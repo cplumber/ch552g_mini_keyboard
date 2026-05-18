@@ -146,6 +146,26 @@ void keyboard_vscode_toggle_terminal(keyboard_button_keyboard_mode_t mode)
   Keyboard_release(KEY_LEFT_CTRL);
 }
 
+void keyboard_vscode_preview(keyboard_button_keyboard_mode_t mode)
+{
+  if (mode == BTM_RELEASE)
+  {
+    return;
+  }
+
+  Keyboard_press(KEY_LEFT_CTRL);
+  delay(10);
+  Keyboard_press('k');
+  delay(20);
+  Keyboard_release('k');
+  delay(10);
+  Keyboard_release(KEY_LEFT_CTRL);
+
+  delay(50);
+
+  Keyboard_write('v');
+}
+
 void keyboard_vscode_source_control(keyboard_button_keyboard_mode_t mode)
 {
   if (mode == BTM_RELEASE)

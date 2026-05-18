@@ -138,7 +138,7 @@ Current configuration
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Copy / paste | Red | `Ctrl+C` | `Ctrl+V` | `Ctrl+Z` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
 | Google Meet | Yellow | `Ctrl+D` | `Ctrl+E` | `Ctrl+Alt+H` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
-| VS Code | Green | `Ctrl+Shift+E` | `Ctrl+Shift+G`, then `G` | `Ctrl+backtick` | `Alt+Tab` held for `1s` | `Alt+Shift+Tab` held for `1s` | Short click: mic mute, hold `1s`: menu |
+| VS Code | Green | `Ctrl+K`, then `V` | `Ctrl+Shift+G`, then `G` | `Ctrl+backtick` | `Alt+Tab` held for `1s` | `Alt+Shift+Tab` held for `1s` | Short click: mic mute, hold `1s`: menu |
 
 The menu profile uses the encoder to move through the three user profiles; the selected profile is saved in DataFlash, so it survives power cycles.
 
