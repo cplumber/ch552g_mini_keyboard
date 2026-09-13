@@ -113,8 +113,8 @@ void button_menu_down(keyboard_button_keyboard_mode_t mode);
 // Google Meet hand raise / lower
 void keyboard_meet_raise_hand(keyboard_button_keyboard_mode_t mode);
 
-// VS Code terminal toggle
-void keyboard_vscode_toggle_terminal(keyboard_button_keyboard_mode_t mode);
+// VS Code Copy Relative Path chord: Ctrl+K, then Ctrl+Shift+C
+void keyboard_vscode_copy_relative_path(keyboard_button_keyboard_mode_t mode);
 
 // VS Code preview file chord: Ctrl+K, then V
 void keyboard_vscode_preview(keyboard_button_keyboard_mode_t mode);

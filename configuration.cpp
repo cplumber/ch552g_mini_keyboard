@@ -90,7 +90,7 @@ const keyboard_configuration_t configurations[NUM_CONFIGURATION] = {
             },
             [BTN_3] = {
                 .type = BUTTON_FUNCTION,
-                .function.functionPointer = keyboard_vscode_toggle_terminal,
+                .function.functionPointer = keyboard_vscode_copy_relative_path,
             },
             [ENC_CW] = {
                 .type = BUTTON_FUNCTION,

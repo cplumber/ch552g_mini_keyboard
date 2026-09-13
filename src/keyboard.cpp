@@ -130,7 +130,7 @@ void keyboard_meet_raise_hand(keyboard_button_keyboard_mode_t mode)
   Keyboard_release(KEY_LEFT_CTRL);
 }
 
-void keyboard_vscode_toggle_terminal(keyboard_button_keyboard_mode_t mode)
+void keyboard_vscode_copy_relative_path(keyboard_button_keyboard_mode_t mode)
 {
   if (mode == BTM_RELEASE)
   {
@@ -139,10 +139,23 @@ void keyboard_vscode_toggle_terminal(keyboard_button_keyboard_mode_t mode)
 
   Keyboard_press(KEY_LEFT_CTRL);
   delay(10);
-  Keyboard_press('`');
+  Keyboard_press('k');
   delay(20);
-  Keyboard_release('`');
+  Keyboard_release('k');
   delay(10);
+  Keyboard_release(KEY_LEFT_CTRL);
+
+  delay(50);
+
+  Keyboard_press(KEY_LEFT_CTRL);
+  delay(10);
+  Keyboard_press(KEY_LEFT_SHIFT);
+  delay(10);
+  Keyboard_press('c');
+  delay(20);
+  Keyboard_release('c');
+  delay(10);
+  Keyboard_release(KEY_LEFT_SHIFT);
   Keyboard_release(KEY_LEFT_CTRL);
 }
 
