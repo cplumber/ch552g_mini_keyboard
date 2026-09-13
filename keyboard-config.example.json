@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "profiles": {
+    "copy_paste": {
+      "BTN_1": {"chords": [["Ctrl", "C"]], "between_chords_ms": 0},
+      "BTN_2": {"chords": [["Ctrl", "V"]], "between_chords_ms": 0},
+      "BTN_3": {"chords": [["Ctrl", "Z"]], "between_chords_ms": 0}
+    },
+    "google_meet": {
+      "BTN_1": {"chords": [["Ctrl", "D"]], "between_chords_ms": 0},
+      "BTN_2": {"chords": [["Ctrl", "E"]], "between_chords_ms": 0},
+      "BTN_3": {"chords": [["Ctrl", "Alt", "H"]], "between_chords_ms": 0}
+    },
+    "vs_code": {
+      "BTN_1": {"chords": [["Ctrl", "K"], ["V"]], "between_chords_ms": 50},
+      "BTN_2": {"chords": [["Ctrl", "Shift", "G"], ["G"]], "between_chords_ms": 30},
+      "BTN_3": {"chords": [["Ctrl", "K"], ["Ctrl", "Shift", "C"]], "between_chords_ms": 50}
+    },
+    "ms_teams": {
+      "BTN_1": {"chords": [["Ctrl", "Shift", "M"]], "between_chords_ms": 0},
+      "BTN_2": {"chords": [["Ctrl", "Shift", "K"]], "between_chords_ms": 0},
+      "BTN_3": {"chords": [["Alt", "Shift", "A"]], "between_chords_ms": 0}
+    }
+  }
+}

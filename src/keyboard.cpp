@@ -1,12 +1,12 @@
 #include <Arduino.h>
 #include "userUsbHidKeyboardMouse/USBHIDKeyboardMouse.h"
-#include "auto_mode.h"
 #include "led.h"
 #include "keyboard.h"
+#include "macro_config.h"
 #include "../configuration.h"
 
 #define MENU_CONF NUM_CONFIGURATION - 1
-#define MENU_SELECTION_LAST 2
+#define MENU_SELECTION_LAST 3
 #define ENC_LONG_PRESS_MS 1000UL
 #define MENU_MODE_STORAGE_ADDR 0
 
@@ -28,13 +28,6 @@ static void keyboard_press_mode_1(keyboard_button_t button, keyboard_button_keyb
 static void keyboard_press_mode_2(keyboard_button_t button, keyboard_button_keyboard_mode_t mode);
 static void keyboard_press_auto(keyboard_button_t button, keyboard_button_keyboard_mode_t mode);
 static void keyboard_press_menu(keyboard_button_t button, keyboard_button_keyboard_mode_t mode);
-
-// ===================================================================================
-// create keyboard configuration
-// ===================================================================================
-
-const button_function_t button_function_null = {
-    .type = BUTTON_NULL};
 
 // ===================================================================================
 // Menu section
@@ -110,100 +103,6 @@ void keyboard_volume_down(keyboard_button_keyboard_mode_t mode)
   }
 }
 
-void keyboard_meet_raise_hand(keyboard_button_keyboard_mode_t mode)
-{
-  if (mode == BTM_RELEASE)
-  {
-    return;
-  }
-
-  Keyboard_press(KEY_LEFT_CTRL);
-  delay(10);
-  Keyboard_press(KEY_LEFT_ALT);
-  delay(10);
-  Keyboard_press('h');
-  delay(20);
-  Keyboard_release('h');
-  delay(10);
-  Keyboard_release(KEY_LEFT_ALT);
-  delay(10);
-  Keyboard_release(KEY_LEFT_CTRL);
-}
-
-void keyboard_vscode_copy_relative_path(keyboard_button_keyboard_mode_t mode)
-{
-  if (mode == BTM_RELEASE)
-  {
-    return;
-  }
-
-  Keyboard_press(KEY_LEFT_CTRL);
-  delay(10);
-  Keyboard_press('k');
-  delay(20);
-  Keyboard_release('k');
-  delay(10);
-  Keyboard_release(KEY_LEFT_CTRL);
-
-  delay(50);
-
-  Keyboard_press(KEY_LEFT_CTRL);
-  delay(10);
-  Keyboard_press(KEY_LEFT_SHIFT);
-  delay(10);
-  Keyboard_press('c');
-  delay(20);
-  Keyboard_release('c');
-  delay(10);
-  Keyboard_release(KEY_LEFT_SHIFT);
-  Keyboard_release(KEY_LEFT_CTRL);
-}
-
-void keyboard_vscode_preview(keyboard_button_keyboard_mode_t mode)
-{
-  if (mode == BTM_RELEASE)
-  {
-    return;
-  }
-
-  Keyboard_press(KEY_LEFT_CTRL);
-  delay(10);
-  Keyboard_press('k');
-  delay(20);
-  Keyboard_release('k');
-  delay(10);
-  Keyboard_release(KEY_LEFT_CTRL);
-
-  delay(50);
-
-  Keyboard_write('v');
-}
-
-void keyboard_vscode_source_control(keyboard_button_keyboard_mode_t mode)
-{
-  if (mode == BTM_RELEASE)
-  {
-    return;
-  }
-
-  Keyboard_press(KEY_LEFT_CTRL);
-  delay(10);
-  Keyboard_press(KEY_LEFT_SHIFT);
-  delay(10);
-  Keyboard_press('g');
-  delay(20);
-  Keyboard_release('g');
-  delay(10);
-  Keyboard_release(KEY_LEFT_SHIFT);
-  Keyboard_release(KEY_LEFT_CTRL);
-
-  delay(30);
-
-  Keyboard_press('g');
-  delay(20);
-  Keyboard_release('g');
-}
-
 static void keyboard_vscode_switch_window(bool reverse)
 {
   if (!vscode_alt_held_s)
@@ -253,7 +152,6 @@ void keyboard_update(void)
   {
     if ((millis() - enc_press_start_ms_s) >= ENC_LONG_PRESS_MS)
     {
-      auto_set_cycle(button_function_null);
       menu_mode_s = current_mode_s;
       current_mode_s = MENU_CONF;
       set_menu_led();
@@ -300,76 +198,6 @@ void button_menu_down(keyboard_button_keyboard_mode_t mode)
   }
 }
 
-static void keyboard_run_key_sequence(button_sequence_t sequence, keyboard_button_keyboard_mode_t mode)
-{
-  if (mode == BTM_RELEASE)
-  {
-    return;
-  }
-
-  for (uint8_t i = 0; i < sequence.length; i++)
-  {
-    Keyboard_press(sequence.sequence[i]);
-    delay(10);
-    if (sequence.delay > 0)
-    {
-      Keyboard_release(sequence.sequence[i]);
-      delay(sequence.delay);
-    }
-  }
-  Keyboard_releaseAll();
-}
-
-static void keyboard_run_mouse_sequence(button_mouse_t sequence, keyboard_button_keyboard_mode_t mode)
-{
-  if (mode == BTM_RELEASE)
-  {
-    return;
-  }
-  if (sequence.keypress > 0)
-  {
-    Keyboard_press(sequence.keypress);
-    delay(30);
-  }
-  for (uint8_t i = 0; i < sequence.length; i++)
-  {
-    switch (sequence.mouse_event_sequence[i].type)
-    {
-    case UP:
-      Mouse_move(0, -sequence.mouse_event_sequence[i].value);
-      break;
-    case DOWN:
-      Mouse_move(0, sequence.mouse_event_sequence[i].value);
-      break;
-    case LEFT:
-      Mouse_move(-sequence.mouse_event_sequence[i].value, 0);
-      break;
-    case RIGH:
-      Mouse_move(sequence.mouse_event_sequence[i].value, 0);
-      break;
-    case LEFT_CLICK:
-      Mouse_click(MOUSE_LEFT);
-      break;
-    case RIGHT_CLICK:
-      Mouse_click(MOUSE_RIGHT);
-      break;
-    case SCROLL_UP:
-      Mouse_scroll(sequence.mouse_event_sequence[i].value);
-      break;
-    case SCROLL_DOWN:
-      Mouse_scroll(-sequence.mouse_event_sequence[i].value);
-      break;
-    default:
-      break;
-    }
-    if (sequence.keypress > 0)
-    {
-      Keyboard_releaseAll();
-    }
-    delay(sequence.delay);
-  }
-}
-
 void keyboard_press_button(keyboard_button_t button, keyboard_button_keyboard_mode_t mode)
 {
   if (button >= BTN_1 && button <= BTN_3)
@@ -384,34 +212,18 @@ void keyboard_press_button(keyboard_button_t button, keyboard_button_keyboard_mo
     }
   }
 
+  if (button >= BTN_1 && button <= BTN_3 && current_mode_s != MENU_CONF)
+  {
+    macro_config_run((uint8_t)current_mode_s, (uint8_t)button, (uint8_t)mode);
+    return;
+  }
+
   switch (configurations[current_mode_s].button[button].type)
   {
-  case BUTTON_SEQUENCE:
-    keyboard_run_key_sequence(configurations[current_mode_s].button[button].function.sequence, mode);
-    break;
-  case BUTTON_MOUSE:
-    keyboard_run_mouse_sequence(configurations[current_mode_s].button[button].function.mouse, mode);
-    break;
-  case BUTTON_AUTO_KEYBOARD:
-    if (mode == BTM_PRESS)
-    {
-      auto_set_cycle(configurations[current_mode_s].button[button]);
-    }
-    break;
-  case BUTTON_AUTO_MOUSE:
-    if (mode == BTM_PRESS)
-    {
-      auto_set_cycle(configurations[current_mode_s].button[button]);
-    }
-    break;
   case BUTTON_FUNCTION:
-    configurations[current_mode_s].button[button].function.functionPointer(mode);
+    configurations[current_mode_s].button[button].functionPointer(mode);
     break;
   case BUTTON_NULL:
-    if (mode == BTM_PRESS)
-    {
-      auto_set_cycle(configurations[current_mode_s].button[button]);
-    }
     break;
   default:
     break;
@@ -420,6 +232,7 @@ void keyboard_press_button(keyboard_button_t button, keyboard_button_keyboard_mo
 
 void keyboard_setup()
 {
+  macro_config_setup();
   current_mode_s = load_menu_mode();
   menu_mode_s = current_mode_s;
   led_set_menu_profile((uint8_t)current_mode_s);

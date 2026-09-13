@@ -6,13 +6,13 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
 
 - `ch552g_mini_keyboard.ino` is the firmware entrypoint.
 - `src/` holds the firmware modules.
-- `mic_mute_bridge/` holds the Windows helper that syncs mic mute state.
+- `macropad_tools/` holds the Windows helper and configuration tool.
 - `configuration.cpp` defines the keyboard profiles.
 - `scripts/` contains the build and memory-map scripts.
 
 ## Behavior Overview
 
-- There are three normal keyboard profiles plus a menu profile.
+- There are four normal keyboard profiles plus a menu profile.
 - Short encoder click toggles Windows microphone mute through the bridge.
 - Long encoder press enters profile selection mode.
 - Mic mute/live state is shown on the LED closest to the rotary switch.
@@ -23,8 +23,19 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
   - Copy / paste = red
   - Google Meet = yellow
   - VS Code = green
-- VS Code `BTN_1` sends the preview chord `Ctrl+K`, then `V`.
-- VS Code `BTN_3` sends the Copy Relative Path chord `Ctrl+K`, then `Ctrl+Shift+C`.
+  - MS Teams (web) = cyan
+- The default VS Code `BTN_1` macro sends the preview chord `Ctrl+K`, then `V`.
+- The default VS Code `BTN_3` macro sends Copy Relative Path: `Ctrl+K`, then
+  `Ctrl+Shift+C`.
+- `macropad-config.exe bootloader` requests the CH552 USB bootloader for an
+  automated upload. Export the macro configuration before flashing because an
+  upload can erase DataFlash.
+- The four profile sets use persistent two-chord macros; defaults live in
+  `src/macro_config.c` and configuration traffic uses vendor HID report ID `6`.
+- Report ID `6` uses 8 data bytes plus its report ID; keep the USB endpoint
+  packet size in `src/userUsbHidKeyboardMouse/USBconstant.h` at 9 bytes.
+- `macropad_tools/common/` provides shared HID transport for both Windows
+  executables. Keep mic-state feature report ID `5` unchanged.
 
 ## LED Rules
 
@@ -43,9 +54,10 @@ Mic indicator rules:
 
 - [`src/led.cpp`](src/led.cpp) for LED rendering, menu colors, and blink timing
 - [`src/keyboard.cpp`](src/keyboard.cpp) for menu selection and encoder logic
-- [`src/auto_mode.cpp`](src/auto_mode.cpp) for auto-sequence routines
+- [`src/macro_config.c`](src/macro_config.c) for default button macros, execution
+  timing, and single-slot DataFlash configuration
 - [`src/userUsbHidKeyboardMouse/USBhandler.c`](src/userUsbHidKeyboardMouse/USBhandler.c) and [`src/userUsbHidKeyboardMouse/USBHIDKeyboardMouse.c`](src/userUsbHidKeyboardMouse/USBHIDKeyboardMouse.c) for USB report handling
-- [`mic_mute_bridge/main.cpp`](mic_mute_bridge/main.cpp) for Windows Core Audio mute sync
+- [`macropad_tools/main.cpp`](macropad_tools/main.cpp) for Windows Core Audio mute sync
 - [`configuration.cpp`](configuration.cpp) for profile definitions
 - [`readme.md`](readme.md) for user-facing behavior and wiring notes
 
@@ -69,14 +81,20 @@ powershell -File .\scripts\map-report.ps1
 
 Bridge build:
 
-- `mic_mute_bridge\build.bat`
+- `macropad_tools\build.bat`
+
+Build outputs:
+
+- Firmware: 12,810 / 14,336 bytes flash (89%); 467 / 876 bytes RAM (53%).
+- Windows: `macropad_tools\build\mic-mute-bridge.exe` and
+  `macropad_tools\build\macropad-config.exe`.
 
 ## Invariants
 
 - Keep the third LED off unless the user explicitly asks to use it.
 - Do not change the physical LED mapping without updating comments and docs.
 - Preserve the existing encoder actions unless the task explicitly changes them.
-- Keep the three user profiles plus menu profile behavior intact unless the task explicitly changes it.
+- Keep the four user profiles plus menu profile behavior intact unless the task explicitly changes it.
 - Avoid reverting user edits in unrelated files.
 
 ## Common Gotchas
@@ -93,6 +111,8 @@ When changing LED behavior, update:
 - `src/led.h`
 - `readme.md`
 - `agents.md`
+- `src/macro_config.h` when adding configuration commands
+- `macropad_tools/common/macropad_hid.*` and `macropad_tools/config_tool/main.cpp`
 
 When changing profile logic, update:
 
@@ -103,7 +123,7 @@ When changing profile logic, update:
 
 When changing the bridge protocol, update:
 
-- `mic_mute_bridge/main.cpp`
+- `macropad_tools/main.cpp`
 - `src/userUsbHidKeyboardMouse/USBhandler.c`
 - `src/userUsbHidKeyboardMouse/USBHIDKeyboardMouse.c`
 - `readme.md`

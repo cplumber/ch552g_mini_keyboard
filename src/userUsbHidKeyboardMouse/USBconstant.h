@@ -14,6 +14,7 @@
 
 #define KEYBOARD_EPADDR 0x81
 #define KEYBOARD_LED_EPADDR 0x01
+/* All endpoint reports are at most eight data bytes plus their report ID. */
 #define KEYBOARD_MOUSE_EPSIZE 9
 
 /** Type define for the device configuration descriptor structure. This must be

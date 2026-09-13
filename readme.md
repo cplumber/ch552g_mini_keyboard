@@ -53,6 +53,8 @@ powershell -File .\scripts\build.ps1
 
 The script automatically looks for the bundled `arduino-cli.exe` inside the Arduino IDE install, and it writes the build output to `build/CH55xDuino.mcs51.ch552/`.
 
+Current built size: 12,810 / 14,336 bytes of flash (89%) and 467 / 876 bytes of RAM (53%).
+
 If you want to change the board settings later, edit the default `-Fqbn` value at the top of the script or pass a new one on the command line.
 
 ```powershell
@@ -88,7 +90,7 @@ To enter bootloader mode, CH552G require connect pin P3.6 to vcc with a 10K pull
 - Short the R12 on the bottom of the board and connect the board to your PC.
   ![Short](img/short.jpeg?raw=true)
 - You can now proceed to flash the firmware.
-- Once the firmware is successfully flashed, to *return to bootloader mode, reconnect the USB interface while either pressing the encoder button or in running mode simultaneously press all the buttons*.
+- After the firmware is successfully flashed, reconnect USB while holding the encoder button, press all four buttons while the firmware is running, or use `macropad-config.exe bootloader`.
 
 ## CH552G Flashing (Pin 3 Boot + WCHISPTool)
 
@@ -124,11 +126,14 @@ The bootloader check lives in [`ch552g_mini_keyboard.ino`](ch552g_mini_keyboard.
 
 # Firmware feature
 
-This firmware can set up the keyboard in different configurations.
-Edit `configuration.cpp` to change them.
-To change configuration, long-press the rotary encoder for 1 second, then rotate it.
+This firmware provides four profiles and a profile-selection menu. Long-press
+the rotary encoder for 1 second, then rotate it to select a profile. Encoder actions,
+profile colors, and menu behavior are compiled in; the twelve profile-button macros
+are stored separately in DataFlash.
 
-Profiles can send keyboard events, mouse events, or start automatic cycle routines. Those automatic routines no longer claim a dedicated LED mode; the normal mic and profile indicators stay in place.
+The three buttons in each normal profile are keyboard macros. Each macro supports
+one or two sequential chords, with a configurable delay between two chords; the
+encoder controls and menu behavior remain fixed.
 
 ![Menu](img/key_menu.gif?raw=true)
 
@@ -139,8 +144,63 @@ Current configuration
 | Copy / paste | Red | `Ctrl+C` | `Ctrl+V` | `Ctrl+Z` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
 | Google Meet | Yellow | `Ctrl+D` | `Ctrl+E` | `Ctrl+Alt+H` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
 | VS Code | Green | `Ctrl+K`, then `V` | `Ctrl+Shift+G`, then `G` | `Ctrl+K`, then `Ctrl+Shift+C` (Copy Relative Path) | `Alt+Tab` held for `1s` | `Alt+Shift+Tab` held for `1s` | Short click: mic mute, hold `1s`: menu |
+| MS Teams (web) | Cyan | `Ctrl+Shift+M` | `Ctrl+Shift+K` | `Alt+Shift+A` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
 
-The menu profile uses the encoder to move through the three user profiles; the selected profile is saved in DataFlash, so it survives power cycles.
+The menu profile uses the encoder to move through the four user profiles; the selected profile is saved in DataFlash, so it survives power cycles.
+
+The MS Teams (web) defaults use Microsoft's listed web shortcuts: `Ctrl+Shift+M`
+for mute, `Ctrl+Shift+K` for raise/lower hand, and `Alt+Shift+A` for an audio
+call. See [Microsoft's Teams shortcut list](https://support.microsoft.com/en-gb/office/keyboard-shortcuts-for-microsoft-teams-2e8e2a70-e8d8-4a19-949b-4c36dd5292d2).
+
+### Reassigning profile buttons
+
+After flashing the configuration-capable firmware once, change the twelve profile
+buttons without rebuilding or reflashing. Build the Windows tools in
+`macropad_tools\` and use `macropad-config.exe`:
+
+```powershell
+cd macropad_tools
+build.bat
+build\macropad-config.exe export ..\keyboard-config.json
+build\macropad-config.exe import ..\keyboard-config.json
+build\macropad-config.exe reset
+build\macropad-config.exe bootloader
+```
+
+[`keyboard-config.example.json`](keyboard-config.example.json) shows the default
+format. `export` creates an editable JSON template. The Windows tool validates the
+complete JSON before starting an import; the keyboard stages and checksum-verifies
+the update before activation. Bad input, disconnects, or an interrupted import
+retain the last known-good mapping.
+
+`bootloader` tells the running firmware to enter the CH552 USB bootloader, so a
+script can begin an upload without holding any physical buttons. Export the
+configuration before flashing and import it again afterward: an upload can erase
+DataFlash.
+
+JSON accepts up to two chords per button. Chord items may contain `Ctrl`, `Shift`,
+`Alt`, `GUI`, and one printable ASCII key. `between_chords_ms` must be `0` for a
+one-chord macro and is `0`–`255` for two chords. The firmware preserves the 10 ms
+state-change delay and 20 ms key hold for every chord.
+
+### Automated build and upload
+
+After this firmware is installed, an upload can be performed without physical
+button input. The upload may erase DataFlash, so retain and restore the macro
+backup:
+
+```powershell
+.\macropad_tools\build\macropad-config.exe export .\keyboard-config-backup.json
+powershell -File .\scripts\build.ps1
+.\macropad_tools\build\macropad-config.exe bootloader
+
+& 'C:\Program Files\Arduino IDE\resources\app\lib\backend\resources\arduino-cli.exe' upload `
+  --fqbn 'CH55xDuino:mcs51:ch552:clock=16internal,usb_settings=user148,upload_method=usb,bootloader_pin=p36' `
+  --build-path .\build\CH55xDuino.mcs51.ch552 `
+  .\ch552g_mini_keyboard.ino
+
+.\macropad_tools\build\macropad-config.exe import .\keyboard-config-backup.json
+```
 
 ## Pinout
 
@@ -171,7 +231,11 @@ Here are the resources I used for reprogramming the firmware:
 
 ## Windows Mic Mute Bridge
 
-A separate C++ helper lives in [`mic_mute_bridge/`](mic_mute_bridge/). It listens for `F24` and toggles the default Windows microphone mute state through Core Audio. The helper also sends the current mic state back to the MCU so the mic LED stays in sync with Windows: solid green when live and slow-blinking yellow when muted. The encoder short click emits `F24`; the 2-second hold still opens the menu.
+`macropad_tools/` contains two Windows programs. `mic-mute-bridge.exe` listens
+for `F24`, toggles the default Windows microphone through Core Audio, and sends
+the current mic state back to the MCU. `macropad-config.exe` imports, exports,
+and resets button macros, and can request bootloader mode. The encoder short click
+emits `F24`; a 1-second hold opens the menu.
 
 
 # License

@@ -17,6 +17,8 @@
 #include <thread>
 #include <vector>
 
+#include "common/macropad_hid.h"
+
 namespace
 {
 constexpr int kHotkeyId = 1;
@@ -215,6 +217,7 @@ private:
     IAudioEndpointVolume *endpoint_ = nullptr;
 };
 
+#if 0 // Replaced by common/macropad_hid.cpp; retained temporarily for reference.
 class HidFeedback
 {
 public:
@@ -394,6 +397,10 @@ private:
     uint16_t vendor_id_ = 0;
     uint16_t product_id_ = 0;
 };
+
+#endif
+
+using HidFeedback = MacropadHid;
 
 class MicStateSyncWorker
 {

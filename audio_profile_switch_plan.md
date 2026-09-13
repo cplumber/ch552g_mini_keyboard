@@ -6,7 +6,7 @@
 - Implement the switching logic in the Windows helper, with the firmware only sending the trigger and reflecting confirmed state.
 
 ## Implementation
-- Update the Windows helper in `mic_mute_bridge/main.cpp` to recognize single-click vs double-click timing.
+- Update the Windows helper in `macropad_tools/main.cpp` to recognize single-click vs double-click timing.
 - Make single-click toggle the default microphone mute state.
 - Make double-click switch both microphone and speaker defaults together.
 - Load explicit profile pairs from an external JSON file next to the helper EXE.

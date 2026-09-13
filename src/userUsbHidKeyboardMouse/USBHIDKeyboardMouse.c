@@ -7,6 +7,7 @@
 #include "USBconstant.h"
 #include "USBhandler.h"
 #include "../led.h"
+#include "../macro_config.h"
 // clang-format on
 
 // clang-format off
@@ -17,10 +18,14 @@ extern __xdata __at (EP1_ADDR) uint8_t Ep1Buffer[];
 volatile __xdata uint8_t UpPoint1_Busy =
     0; // Flag of whether upload pointer is busy
 
+uint8_t USB_EP1_send(__data uint8_t reportID);
+
 __xdata uint8_t HIDKey[8] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
 __xdata uint8_t HIDMouse[4] = {0x0, 0x0, 0x0, 0x0};
 __xdata uint8_t HIDConsumer[1] = {0x0};
+__xdata uint8_t ConfigReport[8] = {0x0};
 __xdata uint8_t ep0_set_report_pending_s = 0;
+volatile __data uint8_t bootloader_requested_s = 0;
 
 #define SHIFT 0x80
 __code uint8_t _asciimap[128] = {
@@ -179,8 +184,83 @@ void USB_EP1_OUT() {
   {
     if (USB_RX_LEN >= 2 && Ep1Buffer[0] == 3) {
       led_set_mic_mute_state(Ep1Buffer[1] ? 1 : 0);
+    } else if (USB_RX_LEN >= 1 && Ep1Buffer[0] == 6) {
+      uint8_t command = USB_RX_LEN >= 2 ? Ep1Buffer[1] : 0;
+      uint8_t profile = USB_RX_LEN >= 3 ? Ep1Buffer[2] : 0;
+      uint8_t button = USB_RX_LEN >= 4 ? Ep1Buffer[3] : 0;
+      uint8_t status = MACRO_CONFIG_STATUS_BAD_COMMAND;
+
+      for (uint8_t i = 0; i < sizeof(ConfigReport); ++i) {
+        ConfigReport[i] = 0;
+      }
+
+      switch (command) {
+      case MACRO_CONFIG_CMD_GET_BUTTON:
+        if (profile < 4 && button < 3) {
+          status = MACRO_CONFIG_STATUS_OK;
+        } else {
+          status = MACRO_CONFIG_STATUS_BAD_ARGUMENT;
+        }
+        break;
+      case MACRO_CONFIG_CMD_BEGIN_UPDATE:
+        status = macro_config_begin_update();
+        break;
+      case MACRO_CONFIG_CMD_SET_BUTTON:
+        if (USB_RX_LEN >= 9) {
+          status = macro_config_set_button(profile, button, Ep1Buffer[4],
+                                           Ep1Buffer[5], Ep1Buffer[6],
+                                           Ep1Buffer[7], Ep1Buffer[8],
+                                           macro_config_get_field(profile, button, 5));
+        } else {
+          status = MACRO_CONFIG_STATUS_BAD_ARGUMENT;
+        }
+        break;
+      case MACRO_CONFIG_CMD_SET_DELAY:
+        if (USB_RX_LEN >= 5) {
+          status = macro_config_set_delay(profile, button, Ep1Buffer[4]);
+        } else {
+          status = MACRO_CONFIG_STATUS_BAD_ARGUMENT;
+        }
+        break;
+      case MACRO_CONFIG_CMD_COMMIT:
+        status = macro_config_commit();
+        break;
+      case MACRO_CONFIG_CMD_ABORT:
+        status = macro_config_abort();
+        break;
+      case MACRO_CONFIG_CMD_RESET_DEFAULTS:
+        status = macro_config_reset_defaults();
+        break;
+      case MACRO_CONFIG_CMD_ENTER_BOOTLOADER:
+        /* Prevent an accidental configuration report from taking the device offline. */
+        if (USB_RX_LEN >= 6 && Ep1Buffer[4] == 0xB0 && Ep1Buffer[5] == 0x07) {
+          status = MACRO_CONFIG_STATUS_OK;
+          bootloader_requested_s = 1;
+        } else {
+          status = MACRO_CONFIG_STATUS_BAD_ARGUMENT;
+        }
+        break;
+      default:
+        break;
+      }
+
+      ConfigReport[0] = status;
+      ConfigReport[1] = macro_config_get_field(profile, button, 0);
+      ConfigReport[2] = macro_config_get_field(profile, button, 1);
+      ConfigReport[3] = macro_config_get_field(profile, button, 2);
+      ConfigReport[4] = macro_config_get_field(profile, button, 3);
+      ConfigReport[5] = macro_config_get_field(profile, button, 4);
+      ConfigReport[6] = macro_config_get_field(profile, button, 5);
+      ConfigReport[7] = macro_config_generation();
+      USB_EP1_send(6);
     }
   }
+}
+
+uint8_t USBHID_bootloader_requested(void) {
+  uint8_t requested = bootloader_requested_s;
+  bootloader_requested_s = 0;
+  return requested;
 }
 
 uint8_t USB_EP1_send(__data uint8_t reportID) {
@@ -218,6 +298,12 @@ uint8_t USB_EP1_send(__data uint8_t reportID) {
       Ep1Buffer[64 + 1 + i] = HIDConsumer[i];
     }
     UEP1_T_LEN = 1 + sizeof(HIDConsumer); // data length
+  } else if (reportID == 6) {
+    Ep1Buffer[64 + 0] = 6;
+    for (__data uint8_t i = 0; i < sizeof(ConfigReport); i++) {
+      Ep1Buffer[64 + 1 + i] = ConfigReport[i];
+    }
+    UEP1_T_LEN = 1 + sizeof(ConfigReport);
   } else {
     UEP1_T_LEN = 0;
   }

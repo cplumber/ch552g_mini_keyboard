@@ -1,13 +1,17 @@
 # Firmware Optimization Notes
 
-Current firmware is very close to the flash limit, so the safest wins are feature removals and small logic simplifications. This note collects options only. Nothing here is implemented yet.
+Current firmware is close to the flash limit, so feature removals and small logic
+simplifications remain the safest wins. Auto-mode support was removed to make
+room for persistent, transaction-safe profile-button configuration.
+
+Latest build: 12,810 / 14,336 bytes flash (89%) and 467 / 876 bytes RAM (53%).
+Keep at least the remaining 1,526 bytes of flash available for future changes.
 
 ## Biggest likely wins
 
-1. Remove dead auto-mode support
-- `src/auto_mode.cpp` is still compiled, but none of the active configs use `BUTTON_AUTO_KEYBOARD` or `BUTTON_AUTO_MOUSE`.
-- If auto-repeat is no longer needed, this is the cleanest code-size win.
-- Menu exit currently uses `auto_set_cycle(button_function_null)` only as a reset path, so that reset could be replaced with a tiny local helper.
+1. Auto-mode support (implemented)
+- `src/auto_mode.cpp` and its unused automatic keyboard/mouse routines were
+  removed.
 
 2. Replace menu division/modulo
 - `src/keyboard.cpp` still uses `menu_mode_s % 3` and `menu_mode_s / 3` in the menu LED logic.
@@ -18,6 +22,12 @@ Current firmware is very close to the flash limit, so the safest wins are featur
 - `src/userUsbHidKeyboardMouse/USBHIDKeyboardMouse.c` and `src/userUsbHidKeyboardMouse/USBhandler.c` are large, but they are core functionality.
 - They already handle keyboard, mouse, consumer control, suspend/resume, and LED feedback.
 - Avoid changing these first unless there is a clear bug.
+
+The configurable-macro storage uses one 76-byte slot: twelve six-byte records
+plus a four-byte header. A power failure can invalidate the slot; firmware then
+uses built-in defaults, and the next successful import repairs it. Do not add
+firmware-side JSON parsing or broad macro validation; that
+belongs in `macropad-config.exe`.
 
 ## Smaller possible cleanups
 
@@ -36,4 +46,3 @@ Current firmware is very close to the flash limit, so the safest wins are featur
 - Windows bridge behavior
 
 Those are already part of the working user-facing behavior. The safest approach is to remove unused legacy features before touching active ones.
-

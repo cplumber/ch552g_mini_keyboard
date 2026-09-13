@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#define NUM_CONFIGURATION 4
+#define NUM_CONFIGURATION 5
 typedef enum 
 {
   BTN_1,
@@ -24,61 +24,14 @@ typedef enum
 
 typedef enum 
 {
-  UP,
-  DOWN,
-  LEFT,
-  RIGH,
-  LEFT_CLICK,
-  RIGHT_CLICK,
-  SCROLL_UP,
-  SCROLL_DOWN
-}mouse_event_type_t;
-
-typedef struct 
-{
-  mouse_event_type_t type;
-  uint8_t value;
-} mouse_event_t;
- 
-//Send button sequence with delay, if length is 0, send release when released
-typedef struct 
-{
-  uint8_t sequence[100]; // array of button presses 
-  uint8_t length; // length of the array
-  uint8_t delay; // ms delay between presses, if 0 keep all buttons pressed
-}button_sequence_t;
-
-typedef enum 
-{
-  BUTTON_SEQUENCE, // send button_sequence_t tyoe
-  BUTTON_MOUSE,    // send button_mouse_t type
-  BUTTON_AUTO_KEYBOARD,    // send continuosly button_sequence_t tyoe
-  BUTTON_AUTO_MOUSE,    // send continuosly button_mouse_t type
-  BUTTON_FUNCTION, // send function pointer
-  BUTTON_NULL, // dont do nothing
+  BUTTON_FUNCTION,
+  BUTTON_NULL,
 }keyboard_button_type;
-
-
-
-//Send button and send release when released
-typedef struct 
-{
-  mouse_event_t mouse_event_sequence[30]; // array of mouse event sequences
-  uint8_t length; // length of the array
-  uint8_t delay; // ms delay between event
-  uint8_t keypress; // keypress to send with the mouse event
-}button_mouse_t;
-
 
 typedef struct 
 {
   keyboard_button_type type;
-  union  // anonymous union
-  {
-    button_sequence_t sequence;
-    button_mouse_t mouse;
-    void (*functionPointer)(keyboard_button_keyboard_mode_t mode);
-  }function;
+  void (*functionPointer)(keyboard_button_keyboard_mode_t mode);
 }button_function_t;
 
 typedef struct 
@@ -109,18 +62,6 @@ void button_menu_up(keyboard_button_keyboard_mode_t mode);
 
 // keyboard menu scroll down
 void button_menu_down(keyboard_button_keyboard_mode_t mode);
-
-// Google Meet hand raise / lower
-void keyboard_meet_raise_hand(keyboard_button_keyboard_mode_t mode);
-
-// VS Code Copy Relative Path chord: Ctrl+K, then Ctrl+Shift+C
-void keyboard_vscode_copy_relative_path(keyboard_button_keyboard_mode_t mode);
-
-// VS Code preview file chord: Ctrl+K, then V
-void keyboard_vscode_preview(keyboard_button_keyboard_mode_t mode);
-
-// VS Code source control focus
-void keyboard_vscode_source_control(keyboard_button_keyboard_mode_t mode);
 
 // VS Code window navigation
 void keyboard_vscode_next_window(keyboard_button_keyboard_mode_t mode);

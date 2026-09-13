@@ -7,7 +7,6 @@
 #include "src/userUsbHidKeyboardMouse/USBHIDKeyboardMouse.h"
 
 //app include
-#include "src/auto_mode.h"
 #include "src/buttons.h"
 #include "src/encoder.h"
 #include "src/keyboard.h"
@@ -66,10 +65,14 @@ void setup()
 void loop()
 {
 
+  if (USBHID_bootloader_requested())
+  {
+    BOOT_now();
+  }
+
   //task update
   buttons_update();
   keyboard_update();
-  auto_update();
   encoder_update();
   led_update();
 
