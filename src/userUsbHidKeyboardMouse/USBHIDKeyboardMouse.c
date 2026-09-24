@@ -252,18 +252,14 @@ void USB_EP1_OUT() {
       if (command == MACRO_CONFIG_CMD_GET_BOARD_ID) {
         /* Response data: variant, then the five-byte factory UID. */
         ConfigReport[1] = BOARD_VARIANT_ID;
-        ROM_ADDR_L = 0xFA;
-        ROM_ADDR_H = 0x3F;
-        ROM_CTRL = ROM_CMD_READ;
-        ConfigReport[2] = ROM_DATA_L;
-        ROM_ADDR_L = 0xFC;
-        ROM_CTRL = ROM_CMD_READ;
-        ConfigReport[3] = ROM_DATA_L;
-        ConfigReport[4] = ROM_DATA_H;
-        ROM_ADDR_L = 0xFE;
-        ROM_CTRL = ROM_CMD_READ;
-        ConfigReport[5] = ROM_DATA_L;
-        ConfigReport[6] = ROM_DATA_H;
+        {
+          const __code uint8_t *chip_uid = (__code uint8_t *)ROM_CHIP_ID_HX;
+          ConfigReport[2] = chip_uid[0];
+          ConfigReport[3] = chip_uid[2];
+          ConfigReport[4] = chip_uid[3];
+          ConfigReport[5] = chip_uid[4];
+          ConfigReport[6] = chip_uid[5];
+        }
       } else {
         ConfigReport[1] = macro_config_get_field(profile, button, 0);
         ConfigReport[2] = macro_config_get_field(profile, button, 1);
