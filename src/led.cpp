@@ -120,7 +120,7 @@ void led_update()
 {
   if (usb_suspended_s)
   {
-    for (uint8_t led = 0; led < 3; led++)
+    for (uint8_t led = 0; led < BOARD_NEO_COUNT; led++)
     {
       set_pixel_off(led);
     }

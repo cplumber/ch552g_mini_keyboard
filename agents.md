@@ -32,6 +32,11 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
   upload can erase DataFlash.
 - The four profile sets use persistent two-chord macros; defaults live in
   `src/macro_config.c` and configuration traffic uses vendor HID report ID `6`.
+- Board selection is compile-time: `scripts/build.ps1 -BoardVariant three_key`
+  (default) or `six_key`. The six-key build uses the left vertical button column
+  for BTN_1..BTN_3, keeps the knob behavior, ignores the right column, and uses
+  P1.5/SW2 as a startup/replug bootloader request. P1.5 is shared with the
+  right-bottom switch, so it must not be polled while the application runs.
 - Report ID `6` uses 8 data bytes plus its report ID; keep the USB endpoint
   packet size in `src/userUsbHidKeyboardMouse/USBconstant.h` at 9 bytes.
 - `macropad_tools/common/` provides shared HID transport for both Windows

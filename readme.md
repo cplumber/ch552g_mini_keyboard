@@ -215,6 +215,54 @@ powershell -File .\scripts\build.ps1
 - LED 1: middle LED, menu/profile indicator
 - LED 2: closest to rotary switch, mic mute/live indicator
 
+### Six-key + knob board variant
+
+The six-key variant was mapped with the standalone hardware mapper on
+2026-09-24. The map is recorded in [`configuration.h`](configuration.h) and
+is selected by the `six_key` build variant:
+
+| Control | CH552 pin |
+| --- | --- |
+| Left/top (supported BTN_1) | P1.6 |
+| Left/middle (supported BTN_2) | P1.7 |
+| Left/bottom (supported BTN_3) | P1.1 |
+| Right/top (unused) | P3.2 |
+| Right/middle (unused) | P1.4 |
+| Right/bottom / SW2 line (unused) | P1.5 |
+| Encoder A / B | P3.0 / P3.1 |
+| Encoder press | P3.3 |
+
+The mapper found six responding LED positions. Viewed from the top with the
+knob above the key grid, their physical arrangement is:
+
+```text
+    knob
+3 6
+2 5
+1 4
+```
+
+The verified addressable strip order is pixel `0..5` = physical positions
+`3, 6, 1, 4, 2, 5`. The six-key configuration header records this mapping.
+The red/green/blue test confirms that all six pixels respond as independent RGB
+channels.
+
+Encoder rotation produced `ijij` left and `jiji` right in the mapper, confirming
+the A/B order above. Keep the SW2/P1.5 boot path available when flashing the
+six-key firmware. Build variants are selected explicitly because the board
+cannot be reliably identified by the CH552 before flashing:
+
+```powershell
+powershell -File .\scripts\build.ps1 -BoardVariant three_key
+powershell -File .\scripts\build.ps1 -BoardVariant six_key -BuildPath .\build\CH55xDuino.mcs51.ch552.six_key
+```
+
+SW2/P1.5 is held during startup/replug; because it shares the right-bottom
+switch line, the application does not poll it while running.
+Its three existing logical LED indicators use the left-column LED positions:
+mic/live is top-left (pixel 2), menu is middle-left (pixel 5), and the remaining
+logical LED is bottom-left (pixel 0, kept off).
+
 ## Additional resources
 
 Here are the resources I used for reprogramming the firmware:

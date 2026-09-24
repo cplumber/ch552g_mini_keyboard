@@ -1,7 +1,9 @@
 param(
     [string]$SketchPath = (Join-Path $PSScriptRoot '..\ch552g_mini_keyboard.ino'),
     [string]$BuildPath = (Join-Path $PSScriptRoot '..\build\CH55xDuino.mcs51.ch552'),
-    [string]$Fqbn = 'CH55xDuino:mcs51:ch552:clock=16internal,usb_settings=user148,upload_method=usb,bootloader_pin=p36',
+    [ValidateSet('three_key', 'six_key')]
+    [string]$BoardVariant = 'three_key',
+    [string]$Fqbn = '',
     [string]$ArduinoCliPath = ''
 )
 
@@ -48,20 +50,36 @@ function Resolve-ProjectPath {
 $cli = Resolve-ArduinoCliPath -ExplicitPath $ArduinoCliPath
 
 $SketchPath = Resolve-ProjectPath -PathValue $SketchPath
-$BuildPath = Resolve-ProjectPath -PathValue $BuildPath
+
+if ([System.IO.Path]::IsPathRooted($BuildPath)) {
+    $BuildPath = [System.IO.Path]::GetFullPath($BuildPath)
+} else {
+    $BuildPath = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot "..\$BuildPath"))
+}
+
+if (-not $Fqbn) {
+    $bootloaderPin = if ($BoardVariant -eq 'six_key') { 'p15' } else { 'p36' }
+    $Fqbn = "CH55xDuino:mcs51:ch552:clock=16internal,usb_settings=user148,upload_method=usb,bootloader_pin=$bootloaderPin"
+}
+
+$variantFlags = if ($BoardVariant -eq 'six_key') { '-DBOARD_VARIANT_6KEY' } else { '' }
 
 if (-not (Test-Path -LiteralPath $SketchPath)) {
     throw "Sketch not found: $SketchPath"
 }
 
 New-Item -ItemType Directory -Force -Path $BuildPath | Out-Null
+$BuildPath = (Resolve-Path -LiteralPath $BuildPath).Path
 
 Write-Host "Using arduino-cli: $cli"
 Write-Host "Sketch: $SketchPath"
 Write-Host "Build path: $BuildPath"
 Write-Host "FQBN: $Fqbn"
+Write-Host "Board variant: $BoardVariant"
 
 & $cli compile `
     --fqbn $Fqbn `
     --build-path $BuildPath `
+    --build-property "compiler.c.extra_flags=$variantFlags" `
+    --build-property "compiler.cpp.extra_flags=$variantFlags" `
     $SketchPath

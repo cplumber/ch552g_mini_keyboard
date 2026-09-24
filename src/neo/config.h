@@ -4,10 +4,9 @@
 
 #pragma once
 
-// Pin definitions
-#define PIN_NEO             P34         // pin connected to NeoPixel
+#include "../board_config.h"
 
 
 // NeoPixel configuration
-#define NEO_COUNT           3          // number of pixels in the string
+#define NEO_COUNT           BOARD_NEO_COUNT
 #define NEO_GRB                      // type of pixel: NEO_GRB or NEO_RGB

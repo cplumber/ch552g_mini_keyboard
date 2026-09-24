@@ -5,6 +5,7 @@
 //lib include
 #include "src/neo/neo.h"
 #include "src/userUsbHidKeyboardMouse/USBHIDKeyboardMouse.h"
+#include "src/board_config.h"
 
 //app include
 #include "src/buttons.h"
@@ -12,21 +13,6 @@
 #include "src/keyboard.h"
 #include "src/led.h"
 #include "src/util.h"
-
-// Button (Mechnical, left to right)
-#define PIN_BTN_1 11
-#define PIN_BTN_2 17
-#define PIN_BTN_3 16
-#define PIN_BTN_ENC 33
-
-#define ENCODER_A 31
-#define ENCODER_B 30
-
-
-#define LED_PIN 34 // Pin for the LED strip, configure neo leds in src/neo/config.h
-
-
-
 
 // ===================================================================================
 // Main section
@@ -39,6 +25,19 @@ void setup()
   NEO_init();
   delay(10);
   NEO_clearAll();
+
+#if BOARD_HAS_SIX_KEYS
+  // SW2/P1.5 is the six-key board's hardware recovery input. The ROM loader
+  // normally sees it before this code; this check also handles a running app
+  // that is reset with SW2 held.
+  pinMode(PIN_BOOT_SW2, INPUT_PULLUP);
+  if (!digitalRead(PIN_BOOT_SW2))
+  {
+    Keyboard_releaseAll();
+    delay(20);
+    BOOT_now();
+  }
+#endif
 
   // Go in bootloader more if connected with encoder button pressed
   if (!digitalRead(PIN_BTN_ENC))

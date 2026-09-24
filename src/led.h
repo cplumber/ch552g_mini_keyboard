@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "board_config.h"
 
 // Key colors (hue value: 0..191)
 #define NEO_RED 0    // red
@@ -12,9 +13,16 @@
 #define NEO_WHITE 191  // white
 #define NEO_BRIGHT_KEYS 0
 
+#if BOARD_HAS_SIX_KEYS
+// Six-key board: mirror the three-key layout on the left column. With the
+#define LED_0 SIX_KEY_LED_0_PIXEL // bottom-left/farthest, kept off
+#define LED_1 SIX_KEY_LED_1_PIXEL // middle-left, menu/profile selection
+#define LED_2 SIX_KEY_LED_2_PIXEL // top-left/closest, mic mute/live
+#else
 #define LED_0 0 // farthest from rotary switch, kept off
 #define LED_1 1 // middle LED, menu/profile selection
 #define LED_2 2 // closest to rotary switch, mic mute/live
+#endif
 
 enum led_keyboard_mode_t
 {
