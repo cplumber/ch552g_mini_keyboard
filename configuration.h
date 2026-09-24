@@ -7,9 +7,9 @@ extern const keyboard_configuration_t configurations[NUM_CONFIGURATION];
 // Discovered six-key + knob board wiring (hardware mapper, 2026-09-24).
 // The six-key build consumes the left-column definitions for BTN_1..BTN_3;
 // the right-column definitions remain recorded for future expansion.
-#define SIX_KEY_BTN_1 16       // left/top: mapper g, P1.6
-#define SIX_KEY_BTN_2 17       // left/middle: mapper h, P1.7
-#define SIX_KEY_BTN_3 11       // left/bottom: mapper b, P1.1
+#define SIX_KEY_BTN_1 11       // CONFIRMED: left/top -> logical BTN_1, P1.1 (b)
+#define SIX_KEY_BTN_2 17       // CONFIRMED: left/middle -> logical BTN_2, P1.7 (h)
+#define SIX_KEY_BTN_3 16       // CONFIRMED: left/bottom -> logical BTN_3, P1.6 (g)
 #define SIX_KEY_BTN_4 32       // right/top: mapper k, P3.2
 #define SIX_KEY_BTN_5 14       // right/middle: mapper e, P1.4
 #define SIX_KEY_BTN_6 15       // right/bottom: mapper f, P1.5 / SW2 line
@@ -24,18 +24,12 @@ extern const keyboard_configuration_t configurations[NUM_CONFIGURATION];
 //       3 6
 //       2 5
 //       1 4
-// The mapper's physical layout is numbered as shown above. The verified strip
-// order is pixel indices 0..5 = physical positions 3, 6, 1, 4, 2, 5.
-#define SIX_KEY_LED_PIXEL_0_POSITION 3
-#define SIX_KEY_LED_PIXEL_1_POSITION 6
-#define SIX_KEY_LED_PIXEL_2_POSITION 1
-#define SIX_KEY_LED_PIXEL_3_POSITION 4
-#define SIX_KEY_LED_PIXEL_4_POSITION 2
-#define SIX_KEY_LED_PIXEL_5_POSITION 5
-
-// Logical indicators used by the main firmware on the six-key board.
-// These are the verified physical left-column placements:
-// LED_0 = bottom-left/off, LED_1 = middle-left/menu, LED_2 = top-left/mic.
+// LED_0 (off): physical position not yet confirmed. Do not infer its location
+// from the mapper drawing; record it only after a direct one-pixel test.
 #define SIX_KEY_LED_0_PIXEL 0
-#define SIX_KEY_LED_1_PIXEL 5
+
+// LED_1 (menu/profile): CONFIRMED to be the left-middle LED. Its pixel is 1.
+#define SIX_KEY_LED_1_PIXEL 1
+
+// LED_2 (mic/live): CONFIRMED to be the left-top LED. Its pixel is 2.
 #define SIX_KEY_LED_2_PIXEL 2

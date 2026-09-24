@@ -243,7 +243,7 @@ knob above the key grid, their physical arrangement is:
 ```
 
 The verified addressable strip order is pixel `0..5` = physical positions
-`3, 6, 1, 4, 2, 5`. The six-key configuration header records this mapping.
+`3, 6, 2, 5, 1, 4`. The six-key configuration header records this mapping.
 The red/green/blue test confirms that all six pixels respond as independent RGB
 channels.
 
@@ -260,7 +260,7 @@ powershell -File .\scripts\build.ps1 -BoardVariant six_key -BuildPath .\build\CH
 SW2/P1.5 is held during startup/replug; because it shares the right-bottom
 switch line, the application does not poll it while running.
 Its three existing logical LED indicators use the left-column LED positions:
-mic/live is top-left (pixel 2), menu is middle-left (pixel 5), and the remaining
+mic/live is top-left (pixel 2), menu is middle-left (pixel 4), and the remaining
 logical LED is bottom-left (pixel 0, kept off).
 
 ## Additional resources
