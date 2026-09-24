@@ -4,7 +4,7 @@ This document describes the current built-in macro defaults and fixed profile
 behavior. The selected profile and imported macro configuration are stored in
 DataFlash and are restored after a power cycle.
 
-The three standard buttons in each of the four normal profiles are configurable
+The three standard buttons in each of the five normal profiles are configurable
 macros. On the six-key board, right-top/middle/bottom are additional configurable
 `BTN_4`/`BTN_5`/`BTN_6` macros available in every profile. The mappings
 below are the factory defaults; after the configuration firmware is flashed, they
@@ -18,6 +18,7 @@ can be changed without rebuilding firmware.
 | Google Meet | Yellow | `Ctrl+D` — Toggle microphone | `Ctrl+E` — Toggle camera | `Ctrl+Alt+H` — Raise/lower hand | — | System volume up | System volume down |
 | VS Code | Green | `Ctrl+K`, then `V` — Open preview to the side | `Ctrl+Shift+G`, then `G` — Open Source Control | `Ctrl+K`, then `Ctrl+Shift+C` — Copy Relative Path | `Ctrl+\`` — Toggle integrated terminal | `Alt+Tab` — Next window | `Alt+Shift+Tab` — Previous window |
 | MS Teams (web) | Cyan | `Ctrl+Shift+M` — Toggle mute | `Ctrl+Shift+K` — Raise/lower hand | `Alt+Shift+A` — Start audio call | — | System volume up | System volume down |
+| Test | Blue | configurable | configurable | configurable | configurable | configurable | configurable |
 
 In the VS Code profile, turning the encoder keeps `Alt` held for one second after
 the latest turn, allowing repeated turns to cycle through windows before the

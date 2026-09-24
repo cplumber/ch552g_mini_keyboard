@@ -32,6 +32,14 @@
       "BTN_4": {"chords": [], "between_chords_ms": 0},
       "BTN_5": {"chords": [], "between_chords_ms": 0},
       "BTN_6": {"chords": [], "between_chords_ms": 0}
+    },
+    "test": {
+      "BTN_1": {"chords": [], "between_chords_ms": 0},
+      "BTN_2": {"chords": [], "between_chords_ms": 0},
+      "BTN_3": {"chords": [], "between_chords_ms": 0},
+      "BTN_4": {"chords": [], "between_chords_ms": 0},
+      "BTN_5": {"chords": [], "between_chords_ms": 0},
+      "BTN_6": {"chords": [], "between_chords_ms": 0}
     }
   }
 }

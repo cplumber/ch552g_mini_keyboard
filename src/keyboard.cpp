@@ -7,9 +7,9 @@
 #include "board_config.h"
 
 #define MENU_CONF NUM_CONFIGURATION - 1
-#define MENU_SELECTION_LAST 3
+#define MENU_SELECTION_LAST 4
 #define ENC_LONG_PRESS_MS 1000UL
-#define MENU_MODE_STORAGE_ADDR 0
+#define MENU_MODE_STORAGE_ADDR 127 /* outside the macro slot */
 
 static int current_mode_s = 0;                                       // current mode of keyboard
 static int menu_mode_s = 0;                                          // during menu coice

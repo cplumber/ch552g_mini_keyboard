@@ -25,7 +25,7 @@ constexpr uint8_t kShift = 0x02;
 constexpr uint8_t kAlt = 0x04;
 constexpr uint8_t kGui = 0x08;
 
-constexpr const char *kProfiles[] = {"copy_paste", "google_meet", "vs_code", "ms_teams"};
+constexpr const char *kProfiles[] = {"copy_paste", "google_meet", "vs_code", "ms_teams", "test"};
 constexpr const char *kButtons[] = {"BTN_1", "BTN_2", "BTN_3", "BTN_4", "BTN_5", "BTN_6"};
 
 struct Macro
@@ -205,10 +205,10 @@ bool parse_macro(const std::string &section, const char *button_name, Macro &mac
     }
     if (digits == 0) return false;
     macro.inter_chord_delay_ms = static_cast<uint8_t>(delay);
-    return macro.length > 0 && (macro.length == 2 || macro.inter_chord_delay_ms == 0);
+    return macro.length <= 2 && (macro.length == 2 || macro.inter_chord_delay_ms == 0);
 }
 
-bool parse_config(const std::string &json, std::array<std::array<Macro, 6>, 4> &config)
+bool parse_config(const std::string &json, std::array<std::array<Macro, 6>, 5> &config)
 {
     const size_t version_key = json.find("\"version\"");
     size_t version_value = version_key == std::string::npos
@@ -225,7 +225,7 @@ bool parse_config(const std::string &json, std::array<std::array<Macro, 6>, 4> &
         (version_value + 1 < json.size() && std::isdigit(static_cast<unsigned char>(json[version_value + 1]))))
         return false;
 
-    for (size_t profile = 0; profile < 4; ++profile)
+    for (size_t profile = 0; profile < 5; ++profile)
     {
         const std::string marker = std::string("\"") + kProfiles[profile] + "\"";
         const size_t profile_key = json.find(marker);
@@ -279,7 +279,7 @@ bool export_config(MacropadHid &hid, const std::string &path)
 {
     std::ostringstream output;
     output << "{\n  \"version\": 1,\n  \"profiles\": {\n";
-    for (uint8_t profile = 0; profile < 4; ++profile)
+    for (uint8_t profile = 0; profile < 5; ++profile)
     {
         output << "    \"" << kProfiles[profile] << "\": {\n";
         for (uint8_t button = 0; button < 6; ++button)
@@ -311,7 +311,7 @@ bool export_config(MacropadHid &hid, const std::string &path)
                    << static_cast<unsigned>(reply[7]) << "}"
                    << (button == 5 ? "\n" : ",\n");
         }
-        output << "    }" << (profile == 3 ? "\n" : ",\n");
+        output << "    }" << (profile == 4 ? "\n" : ",\n");
     }
     output << "  }\n}\n";
     if (!write_file(path, output.str()))
@@ -360,14 +360,14 @@ int main(int argc, char **argv)
     }
     if (command == "import" && argc == 3)
     {
-        std::array<std::array<Macro, 6>, 4> config = {};
+        std::array<std::array<Macro, 6>, 5> config = {};
         if (!parse_config(read_file(argv[2]), config))
         {
             std::cerr << "Invalid configuration JSON. Use an exported file as the template.\n";
             return 2;
         }
         if (!exchange(hid, kBeginUpdate, 0, 0, nullptr, nullptr)) return 1;
-        for (uint8_t profile = 0; profile < 4; ++profile)
+        for (uint8_t profile = 0; profile < 5; ++profile)
         {
             for (uint8_t button = 0; button < 6; ++button)
             {

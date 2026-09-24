@@ -5,7 +5,7 @@
 #include "macro_config.h"
 #include "userUsbHidKeyboardMouse/USBHIDKeyboardMouse.h"
 
-#define MACRO_PROFILE_COUNT 4
+#define MACRO_PROFILE_COUNT 5
 #define MACRO_BUTTON_COUNT 6
 #define MACRO_CHORD_COUNT 2
 #define MACRO_SLOT_MARKER 0xA5
@@ -16,7 +16,7 @@
 #define MACRO_FIELD_COUNT 6
 #define MACRO_PAYLOAD_SIZE (MACRO_PROFILE_COUNT * MACRO_BUTTON_COUNT * MACRO_RECORD_SIZE)
 #define MACRO_SLOT_SIZE (MACRO_SLOT_HEADER_SIZE + MACRO_PAYLOAD_SIZE)
-#define MACRO_SLOT0_ADDRESS 8
+#define MACRO_SLOT0_ADDRESS 0 /* use DataFlash from the first byte */
 
 #define MACRO_MOD_CTRL 0x01
 #define MACRO_MOD_SHIFT 0x02
@@ -64,6 +64,14 @@ static const button_macro_t defaults_s[MACRO_PROFILE_COUNT][MACRO_BUTTON_COUNT] 
         {1, {{MACRO_MOD_CTRL | MACRO_MOD_SHIFT, 'm'}, {0, 0}}, 0},
         {1, {{MACRO_MOD_CTRL | MACRO_MOD_SHIFT, 'k'}, {0, 0}}, 0},
         {1, {{MACRO_MOD_ALT | MACRO_MOD_SHIFT, 'a'}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
+    },
+    {
+        {0, {{0, 0}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
         {0, {{0, 0}, {0, 0}}, 0},
         {0, {{0, 0}, {0, 0}}, 0},
         {0, {{0, 0}, {0, 0}}, 0},

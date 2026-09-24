@@ -87,6 +87,19 @@ const keyboard_configuration_t configurations[NUM_CONFIGURATION] = {
             [BTN_ENC] = {.type = BUTTON_FUNCTION, .functionPointer = keyboard_press_enc},
         }
     },
+    {   // Configuration test profile
+        .button = {
+            [BTN_1] = {.type = BUTTON_NULL},
+            [BTN_2] = {.type = BUTTON_NULL},
+            [BTN_3] = {.type = BUTTON_NULL},
+            [BTN_4] = {.type = BUTTON_NULL},
+            [BTN_5] = {.type = BUTTON_NULL},
+            [BTN_6] = {.type = BUTTON_NULL},
+            [ENC_CW] = {.type = BUTTON_FUNCTION, .functionPointer = keyboard_volume_up},
+            [ENC_CCW] = {.type = BUTTON_FUNCTION, .functionPointer = keyboard_volume_down},
+            [BTN_ENC] = {.type = BUTTON_FUNCTION, .functionPointer = keyboard_press_enc},
+        }
+    },
     /*
     {   // Reserved slot
         .button = {

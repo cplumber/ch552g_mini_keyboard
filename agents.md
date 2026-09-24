@@ -12,7 +12,7 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
 
 ## Behavior Overview
 
-- There are four normal keyboard profiles plus a menu profile.
+- There are five normal keyboard profiles plus a menu profile.
 - Short encoder click toggles Windows microphone mute through the bridge.
 - Long encoder press enters profile selection mode.
 - Mic mute/live state is shown on the LED closest to the rotary switch.
@@ -24,6 +24,7 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
   - Google Meet = yellow
   - VS Code = green
   - MS Teams (web) = cyan
+- Test = blue
 - The default VS Code `BTN_1` macro sends the preview chord `Ctrl+K`, then `V`.
 - The default VS Code `BTN_3` macro sends Copy Relative Path: `Ctrl+K`, then
   `Ctrl+Shift+C`.
@@ -31,7 +32,7 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
   running firmware. This is the preferred automated upload path: no physical
   button press is required. Export the macro configuration before flashing
   because an upload can erase DataFlash.
-- The four profile sets use persistent two-chord macros; defaults live in
+- The five profile sets use persistent two-chord macros; defaults live in
   `src/macro_config.c` and configuration traffic uses vendor HID report ID `6`.
 - Board selection is compile-time: `scripts/build.ps1 -BoardVariant three_key`
   (default) or `six_key`. The six-key build uses the left vertical button column
@@ -45,9 +46,9 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
 
 ## Firmware, Profiles, and Persistent Data
 
-- `configuration.cpp` defines four user profiles plus the menu profile:
+- `configuration.cpp` defines five user profiles plus the menu profile:
   Copy/paste (red), Google Meet (yellow), VS Code (green), and MS Teams web
-  (cyan). Do not remove the menu profile or alter the profile order unless
+  (cyan), and Test (blue). Do not remove the menu profile or alter the profile order unless
   explicitly requested.
 - `src/keyboard.cpp` owns encoder actions and profile-menu state. A short
   encoder click sends `F24` for mic mute; a roughly one-second hold enters the
@@ -55,7 +56,8 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
   release of the encoder chooses it.
 - `src/macro_config.c` owns defaults, macro execution timing, DataFlash layout,
   and the single persistent configuration slot. Macro configuration survives
-  power cycles but an upload can erase DataFlash.
+  power cycles but an upload can erase DataFlash. The slot starts at DataFlash
+  address 0; the menu-selection byte is at address 127, with no reserved gap.
 - `BTN_1`..`BTN_6` and `BTN_ENC` are logical controls; `BTN_4`..`BTN_6` exist for the
   six-key right-column shortcuts and is ignored by the three-key hardware.
   Board GPIO assignments belong in `configuration.h` / `src/board_config.h`; profile
@@ -247,7 +249,7 @@ Build outputs:
 - Keep the third LED off unless the user explicitly asks to use it.
 - Do not change the physical LED mapping without updating comments and docs.
 - Preserve the existing encoder actions unless the task explicitly changes them.
-- Keep the four user profiles plus menu profile behavior intact unless the task explicitly changes it.
+- Keep the five user profiles plus menu profile behavior intact unless the task explicitly changes it.
 - Avoid reverting user edits in unrelated files.
 
 ## Common Gotchas

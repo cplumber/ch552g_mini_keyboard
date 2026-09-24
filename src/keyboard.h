@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#define NUM_CONFIGURATION 5
+#define NUM_CONFIGURATION 6
 typedef enum 
 {
   BTN_1,

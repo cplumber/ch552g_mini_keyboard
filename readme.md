@@ -129,7 +129,7 @@ low-intensity amber flash on every available LED first.
 
 # Firmware feature
 
-This firmware provides four profiles and a profile-selection menu. Long-press
+This firmware provides five profiles and a profile-selection menu. Long-press
 the rotary encoder for 1 second, then rotate it to select a profile. Encoder actions,
 profile colors, and menu behavior are compiled in; the twelve profile-button macros
 are stored separately in DataFlash.
@@ -148,8 +148,9 @@ Current configuration
 | Google Meet | Yellow | `Ctrl+D` | `Ctrl+E` | `Ctrl+Alt+H` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
 | VS Code | Green | `Ctrl+K`, then `V` | `Ctrl+Shift+G`, then `G` | `Ctrl+K`, then `Ctrl+Shift+C` (Copy Relative Path) | `Alt+Tab` held for `1s` | `Alt+Shift+Tab` held for `1s` | Short click: mic mute, hold `1s`: menu |
 | MS Teams (web) | Cyan | `Ctrl+Shift+M` | `Ctrl+Shift+K` | `Alt+Shift+A` | `Volume up` | `Volume down` | Short click: mic mute, hold `1s`: menu |
+| Test | Blue | configurable | configurable | configurable | configurable | configurable | Short click: mic mute, hold `1s`: menu |
 
-The menu profile uses the encoder to move through the four user profiles; the selected profile is saved in DataFlash, so it survives power cycles.
+The menu profile uses the encoder to move through the five user profiles; the selected profile is saved in DataFlash, so it survives power cycles.
 
 The MS Teams (web) defaults use Microsoft's listed web shortcuts: `Ctrl+Shift+M`
 for mute, `Ctrl+Shift+K` for raise/lower hand, and `Alt+Shift+A` for an audio
