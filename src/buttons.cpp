@@ -50,7 +50,7 @@ void buttons_update(void)
     {
         Keyboard_releaseAll();
         delay(20);
-        BOOT_now();
+        BOOT_with_indicator();
     }
 
     if (bt1ActiveState_s != bt1Active_s)

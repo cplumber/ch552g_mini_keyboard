@@ -58,9 +58,12 @@ Pressing all three buttons and the encoder button together releases active keys
 and enters the bootloader immediately. The raw four-button combination is
 checked before any button macro is executed.
 
-Holding the encoder button while connecting USB also enters the bootloader. After
-flashing this configuration-capable firmware, `macropad-config.exe bootloader`
-can request the same mode from Windows.
+On the six-key board, hold SW2 while reconnecting USB for recovery. While the
+firmware is running, pressing all three left buttons and the encoder button
+together enters the bootloader immediately. `macropad-config.exe bootloader`
+can request the same mode from Windows without pressing any physical buttons;
+this is the preferred upload path. Firmware-triggered entry briefly flashes all
+available LEDs low-intensity amber before jumping to the bootloader.
 
 ## Reassigning profile buttons
 

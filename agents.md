@@ -27,9 +27,10 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
 - The default VS Code `BTN_1` macro sends the preview chord `Ctrl+K`, then `V`.
 - The default VS Code `BTN_3` macro sends Copy Relative Path: `Ctrl+K`, then
   `Ctrl+Shift+C`.
-- `macropad-config.exe bootloader` requests the CH552 USB bootloader for an
-  automated upload. Export the macro configuration before flashing because an
-  upload can erase DataFlash.
+- `macropad-config.exe bootloader` requests the CH552 USB bootloader from the
+  running firmware. This is the preferred automated upload path: no physical
+  button press is required. Export the macro configuration before flashing
+  because an upload can erase DataFlash.
 - The four profile sets use persistent two-chord macros; defaults live in
   `src/macro_config.c` and configuration traffic uses vendor HID report ID `6`.
 - Board selection is compile-time: `scripts/build.ps1 -BoardVariant three_key`
@@ -129,14 +130,14 @@ normal application behavior remains the same as on the three-key board.
   left buttons. `buttons.cpp` checks the raw four inputs before any macro or
   other button handling, then calls `BOOT_now()` immediately. It is not a
   startup-only behavior and must remain identical on both board variants.
-- Holding the encoder during USB connection is also the existing three-key
-  startup bootloader path. It remains available on the six-key build.
 - SW2/P1.5 is only a startup/replug recovery method. Do not poll P1.5 while
   the application runs: it is electrically shared with the unused right-bottom
   key and cannot be distinguished from it.
 - Normal LED behavior does not change: `LED_2` is solid green when the mic is
   live and blinks yellow when muted; `LED_1` shows the profile/menu color;
   `LED_0` remains off.
+- Any firmware-triggered bootloader entry briefly flashes every configured
+  NeoPixel low-intensity amber, then jumps immediately to the bootloader.
 - The authoritative logical LED pixels are `SIX_KEY_LED_0_PIXEL`,
   `SIX_KEY_LED_1_PIXEL`, and `SIX_KEY_LED_2_PIXEL` in `configuration.h`.
   `src/led.h` must reference these definitions; do not hardcode alternate
@@ -148,8 +149,10 @@ normal application behavior remains the same as on the three-key board.
   removed completely with `git clean -fdX -- build`; never delete source files,
   `configuration.h`, or user documents as part of cleanup.
 - Upload the six-key build with the six-key FQBN (`bootloader_pin=p15`). Enter
-  ROM bootloader with SW2 held while reconnecting USB, or use the immediate
-  left-three-buttons + encoder combination from the running application.
+  ROM bootloader without touching the board by running
+  `macropad-config.exe bootloader` while the application is running. SW2 held
+  during reconnect and the immediate left-three-buttons + encoder combination
+  remain physical fallback methods.
 - `app_window_targeting_plan.md` is a user file, not generated output; do not
   stage, delete, or alter it unless the user explicitly requests it.
 

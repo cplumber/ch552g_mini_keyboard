@@ -11,8 +11,6 @@
 #define NEO_BLUE 128 // blue
 #define NEO_MAG 160  // magenta
 #define NEO_WHITE 191  // white
-#define NEO_BRIGHT_KEYS 0
-
 #if BOARD_HAS_SIX_KEYS
 // Six-key board: left-bottom is off, left-middle is menu, left-top is mic.
 #define LED_0 SIX_KEY_LED_0_PIXEL // confirmed left-bottom, kept off

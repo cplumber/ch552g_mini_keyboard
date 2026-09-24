@@ -90,7 +90,10 @@ To enter bootloader mode, CH552G require connect pin P3.6 to vcc with a 10K pull
 - Short the R12 on the bottom of the board and connect the board to your PC.
   ![Short](img/short.jpeg?raw=true)
 - You can now proceed to flash the firmware.
-- After the firmware is successfully flashed, reconnect USB while holding the encoder button, press all four buttons while the firmware is running, or use `macropad-config.exe bootloader`.
+- After the firmware is successfully flashed, the preferred method is to run
+  `macropad-config.exe bootloader` while the firmware is running; this enters
+  bootloader mode without pressing any buttons. SW2 during reconnect and the
+  four-button combination remain physical fallback methods.
 
 ## CH552G Flashing (Pin 3 Boot + WCHISPTool)
 
@@ -117,10 +120,10 @@ Use this as the fallback method if the default P3.6-to-VCC bootloader path does 
 
 ### Next uploads, no pin short
 
-1. Hold the encoder button.
-2. Plug USB.
-
-The bootloader check lives in [`ch552g_mini_keyboard.ino`](ch552g_mini_keyboard.ino). When the encoder button is held during startup, the firmware flashes the three LEDs, then jumps into bootloader mode.
+For the six-key board, hold SW2 while reconnecting USB. During normal operation,
+press the three left buttons and the encoder button together to enter the
+bootloader immediately. Firmware-triggered entry gives one very brief,
+low-intensity amber flash on every available LED first.
 
 
 
@@ -174,9 +177,9 @@ the update before activation. Bad input, disconnects, or an interrupted import
 retain the last known-good mapping.
 
 `bootloader` tells the running firmware to enter the CH552 USB bootloader, so a
-script can begin an upload without holding any physical buttons. Export the
-configuration before flashing and import it again afterward: an upload can erase
-DataFlash.
+script can begin an upload without holding any physical buttons. This is the
+preferred upload workflow. Export the configuration before flashing and import
+it again afterward: an upload can erase DataFlash.
 
 JSON accepts up to two chords per button. Chord items may contain `Ctrl`, `Shift`,
 `Alt`, `GUI`, and one printable ASCII key. `between_chords_ms` must be `0` for a
