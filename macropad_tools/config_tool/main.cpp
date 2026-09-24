@@ -19,6 +19,7 @@ constexpr uint8_t kCommit = 4;
 constexpr uint8_t kAbort = 5;
 constexpr uint8_t kResetDefaults = 6;
 constexpr uint8_t kSetDelay = 8;
+constexpr uint8_t kGetBoardId = 9;
 constexpr uint8_t kOk = 0;
 constexpr uint8_t kCtrl = 0x01;
 constexpr uint8_t kShift = 0x02;
@@ -327,7 +328,7 @@ int main(int argc, char **argv)
 {
     if (argc < 2 || argc > 3)
     {
-        std::cerr << "Usage: macropad-config.exe export <file> | import <file> | reset | bootloader\n";
+        std::cerr << "Usage: macropad-config.exe board | export <file> | import <file> | reset | bootloader\n";
         return 2;
     }
 
@@ -348,6 +349,23 @@ int main(int argc, char **argv)
     if (command == "reset" && argc == 2)
     {
         return exchange(hid, kResetDefaults, 0, 0, nullptr, nullptr) ? 0 : 1;
+    }
+    if (command == "board" && argc == 2)
+    {
+        std::array<uint8_t, 9> reply = {};
+        if (!exchange(hid, kGetBoardId, 0, 0, nullptr, &reply)) return 1;
+        if (reply[2] == 2)
+        {
+            std::cout << "six_key\n";
+            return 0;
+        }
+        if (reply[2] == 1)
+        {
+            std::cout << "three_key\n";
+            return 0;
+        }
+        std::cerr << "Unknown board ID: " << static_cast<unsigned>(reply[2]) << "\n";
+        return 1;
     }
     if (command == "bootloader" && argc == 2)
     {
@@ -389,6 +407,6 @@ int main(int argc, char **argv)
         return exchange(hid, kCommit, 0, 0, nullptr, nullptr) ? 0 : 1;
     }
 
-    std::cerr << "Usage: macropad-config.exe export <file> | import <file> | reset | bootloader\n";
+    std::cerr << "Usage: macropad-config.exe board | export <file> | import <file> | reset | bootloader\n";
     return 2;
 }

@@ -8,6 +8,7 @@
 #include "USBhandler.h"
 #include "../led.h"
 #include "../macro_config.h"
+#include "../board_config.h"
 // clang-format on
 
 // clang-format off
@@ -240,6 +241,9 @@ void USB_EP1_OUT() {
           status = MACRO_CONFIG_STATUS_BAD_ARGUMENT;
         }
         break;
+      case MACRO_CONFIG_CMD_GET_BOARD_ID:
+        status = MACRO_CONFIG_STATUS_OK;
+        break;
       default:
         break;
       }
@@ -252,6 +256,9 @@ void USB_EP1_OUT() {
       ConfigReport[5] = macro_config_get_field(profile, button, 4);
       ConfigReport[6] = macro_config_get_field(profile, button, 5);
       ConfigReport[7] = macro_config_generation();
+      if (command == MACRO_CONFIG_CMD_GET_BOARD_ID) {
+        ConfigReport[1] = BOARD_VARIANT_ID;
+      }
       USB_EP1_send(6);
     }
   }

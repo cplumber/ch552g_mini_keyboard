@@ -169,6 +169,7 @@ build\macropad-config.exe export ..\keyboard-config.json
 build\macropad-config.exe import ..\keyboard-config.json
 build\macropad-config.exe reset
 build\macropad-config.exe bootloader
+build\macropad-config.exe board
 ```
 
 [`keyboard-config.example.json`](keyboard-config.example.json) shows the default
@@ -181,6 +182,10 @@ retain the last known-good mapping.
 script can begin an upload without holding any physical buttons. This is the
 preferred upload workflow. Export the configuration before flashing and import
 it again afterward: an upload can erase DataFlash.
+
+`board` reads the one-byte board ID compiled into the running firmware and prints
+`three_key` or `six_key`. It cannot identify a blank device or the ROM
+bootloader, so those cases still require choosing the build variant manually.
 
 JSON accepts up to two chords per button. On the six-key board, `BTN_4` controls
 the right-top key and can be configured independently in every profile. Chord items may contain `Ctrl`, `Shift`,

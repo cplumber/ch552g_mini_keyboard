@@ -7,6 +7,7 @@
 #if defined(BOARD_VARIANT_6KEY)
 
 #define BOARD_VARIANT_NAME "six-key"
+#define BOARD_VARIANT_ID 2
 #define BOARD_HAS_SIX_KEYS 1
 
 // Six-key board: left column is the supported three-button column.
@@ -26,6 +27,7 @@
 #else
 
 #define BOARD_VARIANT_NAME "three-key"
+#define BOARD_VARIANT_ID 1
 #define BOARD_HAS_SIX_KEYS 0
 
 #define PIN_BTN_1 11       // P1.1

@@ -76,6 +76,10 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
 - `macropad_tools\build\macropad-config.exe` exports, imports, resets, and
   requests bootloader mode for persistent macros. Export configuration before
   flashing and import it afterward if the DataFlash contents were erased.
+- `macropad-config.exe board` queries the compile-time board ID embedded in the
+  running firmware and prints `three_key` or `six_key`. This works only when an
+  application firmware is running; a blank device or the ROM bootloader cannot
+  identify its board automatically.
 - Build both Windows tools with `macropad_tools\build.bat`.
 - Protocol changes require matching updates on both firmware and Windows sides;
   do not change report IDs, packet sizes, or command payloads in one place.
