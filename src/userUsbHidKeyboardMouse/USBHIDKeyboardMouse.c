@@ -257,6 +257,7 @@ void USB_EP1_OUT() {
       ConfigReport[6] = macro_config_get_field(profile, button, 5);
       ConfigReport[7] = macro_config_generation();
       if (command == MACRO_CONFIG_CMD_GET_BOARD_ID) {
+        /* ConfigReport[1] is the first data byte returned after the status. */
         ConfigReport[1] = BOARD_VARIANT_ID;
       }
       USB_EP1_send(6);

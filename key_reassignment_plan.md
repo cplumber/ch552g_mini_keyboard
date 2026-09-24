@@ -1,9 +1,14 @@
 # Implemented Design: Reassignable Profile Buttons Without Reflashing
 
+This design is implemented in the current firmware. The original four-profile,
+three-button draft below is retained as design history; the shipped format is
+five normal profiles × six buttons (with `BTN_4`–`BTN_6` ignored by three-key
+firmware), using four-byte packed records.
+
 ## Goal
 
 After one firmware update, let the user change the actions for `BTN_1`, `BTN_2`,
-and `BTN_3` in each of the four normal profiles without rebuilding or reflashing
+and `BTN_3` in each normal profile without rebuilding or reflashing
 the keyboard firmware.
 
 The settings must survive a power cycle. A small Windows command-line interface
@@ -13,11 +18,11 @@ must continue using its last known-good configuration.
 
 ## Scope
 
-This intentionally supports only the twelve physical profile buttons:
+The current implementation supports up to thirty physical profile buttons:
 
 | Profiles | Reassignable controls |
 | --- | --- |
-| Copy / paste, Google Meet, VS Code, MS Teams (web) | `BTN_1`, `BTN_2`, `BTN_3` |
+| Copy / paste, Google Meet, VS Code, MS Teams (web), Test | `BTN_1`–`BTN_6` |
 
 The following remain firmware behavior, rather than user-configurable actions:
 
@@ -107,11 +112,11 @@ typedef struct {
 } button_macro_t;
 ```
 
-Each record is six bytes. Twelve records therefore use 72 bytes. Store one complete
-configuration slot in the 128 DataFlash bytes exposed by this CH552 Arduino core.
-The slot contains a four-byte header and the 72-byte payload, for 76 bytes total.
-Reserve the slot starting at address `8`; this keeps the existing profile-selection
-byte at address `0` intact.
+Each stored record is four bytes. Thirty records therefore use 120 bytes. Store
+one complete configuration slot in the 128 DataFlash bytes exposed by this CH552
+Arduino core. The slot contains a four-byte header and the 120-byte payload, for
+124 bytes total, starting at address `0`; the profile-selection byte is at address
+`127`, with no reserved gap.
 
 The stored `key` is deliberately **not** a raw HID usage. It uses the format
 already accepted by `Keyboard_press()` and `Keyboard_release()`—printable ASCII
@@ -155,7 +160,7 @@ Keep the built-in defaults in firmware as a `const` macro table. On startup:
    the built-in defaults without writing them to DataFlash.
 
 The active runtime table is only replaced after a complete slot passes all checks.
-The current profile-selection byte at DataFlash address `0` remains independent
+The current profile-selection byte at DataFlash address `127` remains independent
 of the macro configuration.
 
 ### Saves with default fallback
@@ -168,7 +173,7 @@ firmware to use built-in defaults.
    built-in defaults) into it.
 2. Each `SET_BUTTON` checks its profile, button index, and length of 0–2 before
    replacing only that staged record. The Windows CLI validates modifiers, keys,
-   JSON structure, and all twelve mappings before it starts an import.
+   JSON structure, and all configured mappings before it starts an import.
 3. `COMMIT` reads and validates the entire staged slot, calculates its overall
    checksum, writes the header fields, and writes the single valid-marker byte
    last.

@@ -3,7 +3,8 @@
 #include "../configuration.h"
 
 // Board selection is a compile-time property. Select it through
-// scripts/build.ps1 -BoardVariant; do not try to infer it at runtime.
+// scripts/build.ps1 -BoardVariant. BOARD_VARIANT_ID is reported by the
+// running firmware through the config tool; it cannot identify a blank device.
 #if defined(BOARD_VARIANT_6KEY)
 
 #define BOARD_VARIANT_NAME "six-key"

@@ -27,6 +27,7 @@ build\macropad-config.exe export ..\keyboard-config.json
 build\macropad-config.exe import ..\keyboard-config.json
 build\macropad-config.exe reset
 build\macropad-config.exe bootloader
+build\macropad-config.exe board
 ```
 
 Use an exported JSON file as the import template. The configuration tool validates
@@ -38,6 +39,10 @@ the working mapping.
 the handoff just before an automated uploader runs; it does not itself flash a file.
 Export the configuration before uploading and import it after the new firmware
 starts, because flashing can erase DataFlash.
+
+`board` prints the board ID embedded in the running application firmware:
+`three_key` or `six_key`. It cannot identify a blank device or the ROM
+bootloader; select the build variant manually in those cases.
 
 ## CLI test
 

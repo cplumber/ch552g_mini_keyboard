@@ -23,8 +23,8 @@ Keep at least the remaining 1,526 bytes of flash available for future changes.
 - They already handle keyboard, mouse, consumer control, suspend/resume, and LED feedback.
 - Avoid changing these first unless there is a clear bug.
 
-The configurable-macro storage uses one 76-byte slot: twelve six-byte records
-plus a four-byte header. A power failure can invalidate the slot; firmware then
+The configurable-macro storage uses one 124-byte slot: thirty four-byte records
+(five profiles × six buttons) plus a four-byte header. A power failure can invalidate the slot; firmware then
 uses built-in defaults, and the next successful import repairs it. Do not add
 firmware-side JSON parsing or broad macro validation; that
 belongs in `macropad-config.exe`.

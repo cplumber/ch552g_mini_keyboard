@@ -16,7 +16,10 @@ In the normal profiles, encoder rotation controls system volume up/down. The men
 
 ## What's Inside
 
-The core of the board features a WCH CH552G microcontroller, three buttons, a rotary encoder, and three addressable LEDs. The firmware uses LED 2, the pixel closest to the rotary switch, for mic mute/live state, LED 1 for menu/profile selection, and leaves LED 0 off.
+The project supports a three-key board and a six-key + knob board, both using a
+WCH CH552G, rotary encoder, and addressable LEDs. The firmware uses LED 2, the
+pixel closest to the rotary switch, for mic mute/live state, LED 1 for
+menu/profile selection, and leaves LED 0 off.
 
 ![Bottom](img/bottom.jpeg?raw=true)
 
@@ -131,10 +134,11 @@ low-intensity amber flash on every available LED first.
 
 This firmware provides five profiles and a profile-selection menu. Long-press
 the rotary encoder for 1 second, then rotate it to select a profile. Encoder actions,
-profile colors, and menu behavior are compiled in; the twelve profile-button macros
+profile colors, and menu behavior are compiled in; the thirty profile-button macros
 are stored separately in DataFlash.
 
-The three buttons in each normal profile are keyboard macros. Each macro supports
+The buttons in each normal profile are keyboard macros (three on the three-key
+board, six on the six-key board). Each macro supports
 one or two sequential chords, with a configurable delay between two chords; the
 encoder controls and menu behavior remain fixed.
 
@@ -158,7 +162,7 @@ call. See [Microsoft's Teams shortcut list](https://support.microsoft.com/en-gb/
 
 ### Reassigning profile buttons
 
-After flashing the configuration-capable firmware once, change the twelve profile
+After flashing the configuration-capable firmware once, change the profile
 buttons without rebuilding or reflashing. Build the Windows tools in
 `macropad_tools\` and use `macropad-config.exe`:
 

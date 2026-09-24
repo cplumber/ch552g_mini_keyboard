@@ -38,7 +38,7 @@ The encoder button behaves the same in every normal profile:
 
 While in the menu, the three regular buttons do nothing.
 
-- Clockwise: select the next profile (up to MS Teams).
+- Clockwise: select the next profile (up to Test).
 - Counter-clockwise: select the previous profile (down to Copy / paste).
 - The middle LED shows the candidate profile color at higher brightness.
 - The encoder short-click mute action is disabled while the menu is open.
@@ -79,6 +79,7 @@ configuration tool:
 .\macropad_tools\build\macropad-config.exe import .\keyboard-config.json
 .\macropad_tools\build\macropad-config.exe reset
 .\macropad_tools\build\macropad-config.exe bootloader
+.\macropad_tools\build\macropad-config.exe board
 ```
 
 Each configurable button supports one or two keyboard chords. `BTN_4`–`BTN_6`
@@ -90,6 +91,10 @@ or interrupted import leaves the prior working configuration active.
 
 Flashing can erase DataFlash. Run `export` before each firmware upload and
 `import` the saved JSON after the new firmware starts.
+
+The `board` command reads the one-byte compile-time board ID from running
+firmware and prints `three_key` or `six_key`. It is unavailable in the blank or
+ROM-bootloader state.
 
 The current mappings are included in `keyboard-config.example.json`. Start with
 that file, or export the device defaults, rather than writing JSON yourself.
