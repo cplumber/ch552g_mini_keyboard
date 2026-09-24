@@ -123,7 +123,8 @@ normal application behavior remains the same as on the three-key board.
   `-DBOARD_VARIANT_6KEY` and uses `bootloader_pin=p15`.
 - The three supported controls are the left column. Their confirmed logical
   assignments are: left/top = `BTN_1` = P1.1, left/middle = `BTN_2` = P1.7,
-  and left/bottom = `BTN_3` = P1.6. These values live in `configuration.h`.
+  and left/bottom = `BTN_3` = P1.6. The encoder uses the same logical assignment
+  as the three-key board: A=P3.1 and B=P3.0. These values live in `configuration.h`.
 - P3.2/P1.4/P1.5 are confirmed right-top/middle/bottom inputs mapped to
   six-key `BTN_4`..`BTN_6`. P1.5 is also the SW2 recovery line; it is polled as
   BTN_6 only while the application is running, never as a boot request.
@@ -131,7 +132,7 @@ normal application behavior remains the same as on the three-key board.
   bottom/middle/top = pixels 3/4/5. The normal application uses only left
   bottom (`LED_0`, off), left middle (`LED_1`, menu), and left top (`LED_2`,
   mic/live).
-- The encoder is A=P3.0, B=P3.1, press=P3.3.
+- The encoder is A=P3.1, B=P3.0, press=P3.3, matching the three-key board.
 - The NeoPixel data line is P3.4 and the six-key build sets the NeoPixel count
   to six. Do not change this count or data pin while mapping keys or LEDs.
 - The immediate runtime bootloader combination is encoder press + all three

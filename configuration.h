@@ -14,8 +14,8 @@ extern const keyboard_configuration_t configurations[NUM_CONFIGURATION];
 #define SIX_KEY_BTN_4 32       // CONFIRMED: right/top -> BTN_4, P3.2
 #define SIX_KEY_BTN_5 14       // CONFIRMED: right/middle -> BTN_5, P1.4
 #define SIX_KEY_BTN_6 15       // CONFIRMED: right/bottom -> BTN_6, P1.5 / SW2
-#define SIX_KEY_ENCODER_A 30   // P3.0
-#define SIX_KEY_ENCODER_B 31   // P3.1
+#define SIX_KEY_ENCODER_A 31   // P3.1, same logical A as three-key board
+#define SIX_KEY_ENCODER_B 30   // P3.0, same logical B as three-key board
 #define SIX_KEY_ENCODER_PRESS 33 // P3.3
 #define SIX_KEY_BOOT_PIN 15    // SW2 pulls P1.5 low at power-up
 

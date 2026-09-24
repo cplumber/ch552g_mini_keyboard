@@ -243,7 +243,7 @@ variant:
 | Right/top (six-key BTN_4) | P3.2 |
 | Right/middle (six-key BTN_5) | P1.4 |
 | Right/bottom (six-key BTN_6 / SW2 startup line) | P1.5 |
-| Encoder A / B | P3.0 / P3.1 |
+| Encoder A / B | P3.1 / P3.0 |
 | Encoder press | P3.3 |
 
 All six LED positions are confirmed. Viewed from the top with the knob above
@@ -260,8 +260,9 @@ Thus pixel `0..5` = left-bottom, left-middle, left-top, right-bottom,
 right-middle, right-top. The red/green/blue test confirms all six pixels are
 independent RGB channels.
 
-Encoder rotation produced `ijij` left and `jiji` right in the mapper, confirming
-the A/B order above. Keep the SW2/P1.5 boot path available when flashing the
+The six-key encoder uses the same logical A/B assignment as the three-key board:
+A=P3.1 and B=P3.0. This preserves the same clockwise/counter-clockwise direction.
+Keep the SW2/P1.5 boot path available when flashing the
 six-key firmware. Build variants are selected explicitly because the board
 cannot be reliably identified by the CH552 before flashing:
 
