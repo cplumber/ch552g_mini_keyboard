@@ -204,6 +204,12 @@ keyboard when multiple boards are connected:
 Each existing board must receive UID-capable firmware once while connected
 alone. Blank devices and the ROM bootloader cannot answer the UID query.
 
+To enumerate all connected UID-capable keyboards, use:
+
+```powershell
+.\macropad_tools\build\macropad-config.exe list
+```
+
 JSON accepts up to two chords per button. On the six-key board, `BTN_4` controls
 the right-top key and can be configured independently in every profile. Chord items may contain `Ctrl`, `Shift`,
 `Alt`, `GUI`, and one printable ASCII key. `between_chords_ms` must be `0` for a

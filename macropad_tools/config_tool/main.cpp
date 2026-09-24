@@ -340,7 +340,7 @@ int main(int argc, char **argv)
     }
     if (argument >= argc || argc - argument > 2)
     {
-        std::cerr << "Usage: macropad-config.exe [--uid HEX10] board | export <file> | import <file> | reset | bootloader\n";
+        std::cerr << "Usage: macropad-config.exe list | [--uid HEX10] board | export <file> | import <file> | reset | bootloader\n";
         return 2;
     }
 
@@ -348,14 +348,29 @@ int main(int argc, char **argv)
     hid.configure(0x1209, 0xC55D);
     hid.set_target_uid(target_uid);
     std::string error;
+    const std::string command = argv[argument];
+    const bool has_file = argc - argument == 2;
+    if (command == "list" && !has_file)
+    {
+        std::vector<MacropadBoardIdentity> identities;
+        if (!hid.list_identities(identities, &error))
+        {
+            std::cerr << error << "\n";
+            return 1;
+        }
+        for (const auto &identity : identities)
+        {
+            std::cout << (identity.variant == 2 ? "six_key" : "three_key") << " uid=";
+            for (uint8_t byte : identity.uid) std::printf("%02X", byte);
+            std::cout << "\n";
+        }
+        return 0;
+    }
     if (!hid.open(&error))
     {
         std::cerr << error << "\n";
         return 1;
     }
-
-    const std::string command = argv[argument];
-    const bool has_file = argc - argument == 2;
     if (command == "export" && has_file)
     {
         return export_config(hid, argv[argument + 1]) ? 0 : 1;
@@ -425,6 +440,6 @@ int main(int argc, char **argv)
         return exchange(hid, kCommit, 0, 0, nullptr, nullptr) ? 0 : 1;
     }
 
-    std::cerr << "Usage: macropad-config.exe [--uid HEX10] board | export <file> | import <file> | reset | bootloader\n";
+    std::cerr << "Usage: macropad-config.exe list | [--uid HEX10] board | export <file> | import <file> | reset | bootloader\n";
     return 2;
 }

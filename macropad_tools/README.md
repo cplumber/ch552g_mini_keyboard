@@ -48,6 +48,8 @@ UID-capable firmware also prints the CH552G factory 40-bit UID, for example
 `six_key uid=1234ABCDEF`. Add `--uid HEX10` before the command to select one
 keyboard when multiple boards are connected. Each existing board needs one
 UID-capable firmware upload while connected alone before this selection works.
+Use `build\\macropad-config.exe list` to enumerate all connected UID-capable
+keyboards.
 
 ## CLI test
 

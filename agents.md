@@ -83,6 +83,8 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
 - UID-capable firmware also reports the CH552G factory 40-bit chip UID. Prefix
   commands with `--uid HEX10` to select one keyboard when several are connected.
   Older firmware must be updated once while connected alone.
+- `macropad-config.exe list` enumerates every connected UID-capable keyboard and
+  prints its board type and UID.
 - Build both Windows tools with `macropad_tools\build.bat`.
 - Protocol changes require matching updates on both firmware and Windows sides;
   do not change report IDs, packet sizes, or command payloads in one place.

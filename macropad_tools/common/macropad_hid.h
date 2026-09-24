@@ -3,6 +3,13 @@
 #include <array>
 #include <cstdint>
 #include <string>
+#include <vector>
+
+struct MacropadBoardIdentity
+{
+    uint8_t variant = 0;
+    std::array<uint8_t, 5> uid = {};
+};
 
 class MacropadHid
 {
@@ -15,6 +22,8 @@ public:
 
     void configure(uint16_t vendor_id, uint16_t product_id);
     void set_target_uid(const std::string &uid);
+    bool list_identities(std::vector<MacropadBoardIdentity> &identities,
+                         std::string *error = nullptr) const;
     bool open(std::string *error = nullptr);
     bool send_mic_state(bool muted, std::string *error = nullptr);
     bool exchange_config(const std::array<uint8_t, 9> &request,
