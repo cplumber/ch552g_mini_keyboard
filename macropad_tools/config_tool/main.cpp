@@ -3,6 +3,7 @@
 #include <array>
 #include <cctype>
 #include <cstdint>
+#include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -326,14 +327,26 @@ bool export_config(MacropadHid &hid, const std::string &path)
 
 int main(int argc, char **argv)
 {
-    if (argc < 2 || argc > 3)
+    int argument = 1;
+    std::string target_uid;
+    if (argument < argc && std::string(argv[argument]) == "--uid")
     {
-        std::cerr << "Usage: macropad-config.exe board | export <file> | import <file> | reset | bootloader\n";
+        if (argument + 1 >= argc) {
+            std::cerr << "Missing UID after --uid\n";
+            return 2;
+        }
+        target_uid = argv[argument + 1];
+        argument += 2;
+    }
+    if (argument >= argc || argc - argument > 2)
+    {
+        std::cerr << "Usage: macropad-config.exe [--uid HEX10] board | export <file> | import <file> | reset | bootloader\n";
         return 2;
     }
 
     MacropadHid hid;
     hid.configure(0x1209, 0xC55D);
+    hid.set_target_uid(target_uid);
     std::string error;
     if (!hid.open(&error))
     {
@@ -341,33 +354,38 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    const std::string command = argv[1];
-    if (command == "export" && argc == 3)
+    const std::string command = argv[argument];
+    const bool has_file = argc - argument == 2;
+    if (command == "export" && has_file)
     {
-        return export_config(hid, argv[2]) ? 0 : 1;
+        return export_config(hid, argv[argument + 1]) ? 0 : 1;
     }
-    if (command == "reset" && argc == 2)
+    if (command == "reset" && !has_file)
     {
         return exchange(hid, kResetDefaults, 0, 0, nullptr, nullptr) ? 0 : 1;
     }
-    if (command == "board" && argc == 2)
+    if (command == "board" && !has_file)
     {
         std::array<uint8_t, 9> reply = {};
         if (!exchange(hid, kGetBoardId, 0, 0, nullptr, &reply)) return 1;
         if (reply[2] == 2)
         {
-            std::cout << "six_key\n";
+            std::cout << "six_key uid=";
+            for (unsigned i = 0; i < 5; ++i) std::printf("%02X", reply[3 + i]);
+            std::cout << "\n";
             return 0;
         }
         if (reply[2] == 1)
         {
-            std::cout << "three_key\n";
+            std::cout << "three_key uid=";
+            for (unsigned i = 0; i < 5; ++i) std::printf("%02X", reply[3 + i]);
+            std::cout << "\n";
             return 0;
         }
         std::cerr << "Unknown board ID: " << static_cast<unsigned>(reply[2]) << "\n";
         return 1;
     }
-    if (command == "bootloader" && argc == 2)
+    if (command == "bootloader" && !has_file)
     {
         if (!hid.request_bootloader(&error))
         {
@@ -376,10 +394,10 @@ int main(int argc, char **argv)
         }
         return 0;
     }
-    if (command == "import" && argc == 3)
+    if (command == "import" && has_file)
     {
         std::array<std::array<Macro, 6>, 5> config = {};
-        if (!parse_config(read_file(argv[2]), config))
+        if (!parse_config(read_file(argv[argument + 1]), config))
         {
             std::cerr << "Invalid configuration JSON. Use an exported file as the template.\n";
             return 2;
@@ -407,6 +425,6 @@ int main(int argc, char **argv)
         return exchange(hid, kCommit, 0, 0, nullptr, nullptr) ? 0 : 1;
     }
 
-    std::cerr << "Usage: macropad-config.exe board | export <file> | import <file> | reset | bootloader\n";
+    std::cerr << "Usage: macropad-config.exe [--uid HEX10] board | export <file> | import <file> | reset | bootloader\n";
     return 2;
 }

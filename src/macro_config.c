@@ -500,8 +500,3 @@ uint8_t macro_config_get_field(uint8_t profile, uint8_t button, uint8_t field)
   default: return record.inter_chord_delay_ms;
   }
 }
-
-uint8_t macro_config_generation(void)
-{
-  return active_generation_s;
-}

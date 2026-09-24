@@ -41,7 +41,6 @@ uint8_t macro_config_commit(void);
 uint8_t macro_config_abort(void);
 uint8_t macro_config_reset_defaults(void);
 uint8_t macro_config_get_field(uint8_t profile, uint8_t button, uint8_t field);
-uint8_t macro_config_generation(void);
 
 #ifdef __cplusplus
 }

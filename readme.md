@@ -191,6 +191,19 @@ it again afterward: an upload can erase DataFlash.
 `three_key` or `six_key`. It cannot identify a blank device or the ROM
 bootloader, so those cases still require choosing the build variant manually.
 
+UID-capable firmware also prints the CH552G factory 40-bit UID, for example
+`six_key uid=1234ABCDEF`. Prefix a command with `--uid HEX10` to select one
+keyboard when multiple boards are connected:
+
+```powershell
+.\macropad_tools\build\macropad-config.exe --uid 1234ABCDEF export .\six-key.json
+.\macropad_tools\build\macropad-config.exe --uid 1234ABCDEF import .\six-key.json
+.\macropad_tools\build\macropad-config.exe --uid 1234ABCDEF bootloader
+```
+
+Each existing board must receive UID-capable firmware once while connected
+alone. Blank devices and the ROM bootloader cannot answer the UID query.
+
 JSON accepts up to two chords per button. On the six-key board, `BTN_4` controls
 the right-top key and can be configured independently in every profile. Chord items may contain `Ctrl`, `Shift`,
 `Alt`, `GUI`, and one printable ASCII key. `between_chords_ms` must be `0` for a

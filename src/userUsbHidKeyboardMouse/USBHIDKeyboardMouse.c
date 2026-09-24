@@ -249,16 +249,28 @@ void USB_EP1_OUT() {
       }
 
       ConfigReport[0] = status;
-      ConfigReport[1] = macro_config_get_field(profile, button, 0);
-      ConfigReport[2] = macro_config_get_field(profile, button, 1);
-      ConfigReport[3] = macro_config_get_field(profile, button, 2);
-      ConfigReport[4] = macro_config_get_field(profile, button, 3);
-      ConfigReport[5] = macro_config_get_field(profile, button, 4);
-      ConfigReport[6] = macro_config_get_field(profile, button, 5);
-      ConfigReport[7] = macro_config_generation();
       if (command == MACRO_CONFIG_CMD_GET_BOARD_ID) {
-        /* ConfigReport[1] is the first data byte returned after the status. */
+        /* Response data: variant, then the five-byte factory UID. */
         ConfigReport[1] = BOARD_VARIANT_ID;
+        ROM_ADDR_L = 0xFA;
+        ROM_ADDR_H = 0x3F;
+        ROM_CTRL = ROM_CMD_READ;
+        ConfigReport[2] = ROM_DATA_L;
+        ROM_ADDR_L = 0xFC;
+        ROM_CTRL = ROM_CMD_READ;
+        ConfigReport[3] = ROM_DATA_L;
+        ConfigReport[4] = ROM_DATA_H;
+        ROM_ADDR_L = 0xFE;
+        ROM_CTRL = ROM_CMD_READ;
+        ConfigReport[5] = ROM_DATA_L;
+        ConfigReport[6] = ROM_DATA_H;
+      } else {
+        ConfigReport[1] = macro_config_get_field(profile, button, 0);
+        ConfigReport[2] = macro_config_get_field(profile, button, 1);
+        ConfigReport[3] = macro_config_get_field(profile, button, 2);
+        ConfigReport[4] = macro_config_get_field(profile, button, 3);
+        ConfigReport[5] = macro_config_get_field(profile, button, 4);
+        ConfigReport[6] = macro_config_get_field(profile, button, 5);
       }
       USB_EP1_send(6);
     }

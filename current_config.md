@@ -96,6 +96,9 @@ The `board` command reads the one-byte compile-time board ID from running
 firmware and prints `three_key` or `six_key`. It is unavailable in the blank or
 ROM-bootloader state.
 
+UID-capable firmware also prints the factory 40-bit CH552G UID. Prefix commands
+with `--uid HEX10` to select one device when multiple keyboards are connected.
+
 The current mappings are included in `keyboard-config.example.json`. Start with
 that file, or export the device defaults, rather than writing JSON yourself.
 

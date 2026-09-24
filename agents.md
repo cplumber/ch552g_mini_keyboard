@@ -80,6 +80,9 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
   running firmware and prints `three_key` or `six_key`. This works only when an
   application firmware is running; a blank device or the ROM bootloader cannot
   identify its board automatically.
+- UID-capable firmware also reports the CH552G factory 40-bit chip UID. Prefix
+  commands with `--uid HEX10` to select one keyboard when several are connected.
+  Older firmware must be updated once while connected alone.
 - Build both Windows tools with `macropad_tools\build.bat`.
 - Protocol changes require matching updates on both firmware and Windows sides;
   do not change report IDs, packet sizes, or command payloads in one place.

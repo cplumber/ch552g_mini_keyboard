@@ -6,11 +6,27 @@
 #include <setupapi.h>
 #include <hidsdi.h>
 #include <vector>
+#include <cctype>
 
 namespace
 {
 constexpr uint8_t kMicStateReportId = 5;
 constexpr uint8_t kConfigReportId = 6;
+
+bool uid_matches(const std::array<uint8_t, 9> &response, const std::string &wanted)
+{
+    if (wanted.size() != 10) return false;
+    static const char hex[] = "0123456789ABCDEF";
+    for (unsigned i = 0; i < 5; ++i)
+    {
+        const char high = hex[response[3 + i] >> 4];
+        const char low = hex[response[3 + i] & 0x0F];
+        if (static_cast<char>(std::toupper(static_cast<unsigned char>(wanted[i * 2]))) != high ||
+            static_cast<char>(std::toupper(static_cast<unsigned char>(wanted[i * 2 + 1]))) != low)
+            return false;
+    }
+    return true;
+}
 
 void set_error(std::string *error, const char *message)
 {
@@ -40,6 +56,11 @@ void MacropadHid::configure(uint16_t vendor_id, uint16_t product_id)
 {
     vendor_id_ = vendor_id;
     product_id_ = product_id;
+}
+
+void MacropadHid::set_target_uid(const std::string &uid)
+{
+    target_uid_ = uid;
 }
 
 bool MacropadHid::open(std::string *error)
@@ -194,6 +215,20 @@ bool MacropadHid::ensure_open(std::string *error, uint16_t usage)
                 HidD_FreePreparsedData(preparsed);
                 handle_ = candidate;
                 usage_ = usage;
+                if (!target_uid_.empty() && usage == 2)
+                {
+                    std::array<uint8_t, 9> request = {};
+                    std::array<uint8_t, 9> response = {};
+                    request[0] = kConfigReportId;
+                    request[1] = 9; // MACRO_CONFIG_CMD_GET_BOARD_ID
+                    std::string query_error;
+                    if (!exchange_config(request, response, &query_error) ||
+                        response[1] != 0 || !uid_matches(response, target_uid_))
+                    {
+                        close();
+                        continue;
+                    }
+                }
                 SetupDiDestroyDeviceInfoList(dev_info);
                 return true;
             }

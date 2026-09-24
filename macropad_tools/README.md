@@ -44,6 +44,11 @@ starts, because flashing can erase DataFlash.
 `three_key` or `six_key`. It cannot identify a blank device or the ROM
 bootloader; select the build variant manually in those cases.
 
+UID-capable firmware also prints the CH552G factory 40-bit UID, for example
+`six_key uid=1234ABCDEF`. Add `--uid HEX10` before the command to select one
+keyboard when multiple boards are connected. Each existing board needs one
+UID-capable firmware upload while connected alone before this selection works.
+
 ## CLI test
 
 Toggle the mic once and exit:
