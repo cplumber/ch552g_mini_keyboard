@@ -14,10 +14,10 @@
 #define NEO_BRIGHT_KEYS 0
 
 #if BOARD_HAS_SIX_KEYS
-// Six-key board: mirror the three-key layout on the left column. With the
-#define LED_0 SIX_KEY_LED_0_PIXEL // physical position pending confirmation
-#define LED_1 SIX_KEY_LED_1_PIXEL // confirmed left-middle menu/profile LED
-#define LED_2 SIX_KEY_LED_2_PIXEL // confirmed left-top mic/live LED
+// Six-key board: left-bottom is off, left-middle is menu, left-top is mic.
+#define LED_0 SIX_KEY_LED_0_PIXEL // confirmed left-bottom, kept off
+#define LED_1 SIX_KEY_LED_1_PIXEL // confirmed left-middle, menu/profile
+#define LED_2 SIX_KEY_LED_2_PIXEL // confirmed left-top, mic/live
 #else
 #define LED_0 0 // farthest from rotary switch, kept off
 #define LED_1 1 // middle LED, menu/profile selection

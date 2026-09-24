@@ -44,6 +44,15 @@ void buttons_update(void)
     bt3Active_s  = !digitalRead(pin_btn_3_s);
     btEncActive_s  = !digitalRead(pin_btn_enc_s);
 
+    // Check this before any button macro can introduce a delay. This is the
+    // immediate runtime bootloader combination for both board variants.
+    if (btEncActive_s && bt1Active_s && bt2Active_s && bt3Active_s)
+    {
+        Keyboard_releaseAll();
+        delay(20);
+        BOOT_now();
+    }
+
     if (bt1ActiveState_s != bt1Active_s)
     {
         bt1ActiveState_s = bt1Active_s;
@@ -97,12 +106,5 @@ void buttons_update(void)
         {
             keyboard_press_button(BTN_ENC, BTM_RELEASE);
         }
-    }
-    if (btEncActive_s  && bt1Active_s  && bt2Active_s  && bt3Active_s)
-    {
-        // go in bootloader mode if press all buttons
-        Keyboard_releaseAll();
-        delay(20);
-        BOOT_now();
     }
 }

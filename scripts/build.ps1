@@ -62,7 +62,11 @@ if (-not $Fqbn) {
     $Fqbn = "CH55xDuino:mcs51:ch552:clock=16internal,usb_settings=user148,upload_method=usb,bootloader_pin=$bootloaderPin"
 }
 
-$variantFlags = if ($BoardVariant -eq 'six_key') { '-DBOARD_VARIANT_6KEY' } else { '' }
+$variantFlagsParts = @()
+if ($BoardVariant -eq 'six_key') {
+    $variantFlagsParts += '-DBOARD_VARIANT_6KEY'
+}
+$variantFlags = $variantFlagsParts -join ' '
 
 if (-not (Test-Path -LiteralPath $SketchPath)) {
     throw "Sketch not found: $SketchPath"
@@ -76,7 +80,6 @@ Write-Host "Sketch: $SketchPath"
 Write-Host "Build path: $BuildPath"
 Write-Host "FQBN: $Fqbn"
 Write-Host "Board variant: $BoardVariant"
-
 & $cli compile `
     --fqbn $Fqbn `
     --build-path $BuildPath `

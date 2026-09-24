@@ -63,7 +63,6 @@ void setup()
 //Main loop, read buttons
 void loop()
 {
-
   if (USBHID_bootloader_requested())
   {
     BOOT_now();

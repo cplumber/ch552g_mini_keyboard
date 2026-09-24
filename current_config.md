@@ -47,10 +47,16 @@ While in the menu, the three regular buttons do nothing.
 - `LED_2` (closest to the encoder): microphone state — solid green when live,
   slow-blinking yellow when muted.
 
+For the six-key board, these logical LEDs are the confirmed left column:
+`LED_2` top (strip pixel 2), `LED_1` middle (strip pixel 1), and `LED_0`
+bottom (strip pixel 0). The right column is unused by the normal application:
+top/middle/bottom are strip pixels 5/4/3 respectively.
+
 ## Other firmware shortcut
 
 Pressing all three buttons and the encoder button together releases active keys
-and enters the bootloader.
+and enters the bootloader immediately. The raw four-button combination is
+checked before any button macro is executed.
 
 Holding the encoder button while connecting USB also enters the bootloader. After
 flashing this configuration-capable firmware, `macropad-config.exe bootloader`
