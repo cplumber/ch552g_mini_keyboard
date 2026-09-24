@@ -4,18 +4,20 @@ This document describes the current built-in macro defaults and fixed profile
 behavior. The selected profile and imported macro configuration are stored in
 DataFlash and are restored after a power cycle.
 
-The three buttons in each of the four normal profiles are configurable macros. The mappings
+The three standard buttons in each of the four normal profiles are configurable
+macros. On the six-key board, right-top/middle/bottom are additional configurable
+`BTN_4`/`BTN_5`/`BTN_6` macros available in every profile. The mappings
 below are the factory defaults; after the configuration firmware is flashed, they
 can be changed without rebuilding firmware.
 
 ## Profiles
 
-| Profile | Menu LED (`LED_1`) | Button 1 | Button 2 | Button 3 | Encoder clockwise | Encoder counter-clockwise |
+| Profile | Menu LED (`LED_1`) | Button 1 | Button 2 | Button 3 | Six-key right column (`BTN_4`–`BTN_6`) | Encoder clockwise | Encoder counter-clockwise |
 | --- | --- | --- | --- | --- | --- | --- |
-| Copy / paste | Red | `Ctrl+C` — Copy | `Ctrl+V` — Paste | `Ctrl+Z` — Undo | System volume up | System volume down |
-| Google Meet | Yellow | `Ctrl+D` — Toggle microphone | `Ctrl+E` — Toggle camera | `Ctrl+Alt+H` — Raise/lower hand | System volume up | System volume down |
-| VS Code | Green | `Ctrl+K`, then `V` — Open preview to the side | `Ctrl+Shift+G`, then `G` — Open Source Control | `Ctrl+K`, then `Ctrl+Shift+C` — Copy Relative Path | `Alt+Tab` — Next window | `Alt+Shift+Tab` — Previous window |
-| MS Teams (web) | Cyan | `Ctrl+Shift+M` — Toggle mute | `Ctrl+Shift+K` — Raise/lower hand | `Alt+Shift+A` — Start audio call | System volume up | System volume down |
+| Copy / paste | Red | `Ctrl+C` — Copy | `Ctrl+V` — Paste | `Ctrl+Z` — Undo | — | System volume up | System volume down |
+| Google Meet | Yellow | `Ctrl+D` — Toggle microphone | `Ctrl+E` — Toggle camera | `Ctrl+Alt+H` — Raise/lower hand | — | System volume up | System volume down |
+| VS Code | Green | `Ctrl+K`, then `V` — Open preview to the side | `Ctrl+Shift+G`, then `G` — Open Source Control | `Ctrl+K`, then `Ctrl+Shift+C` — Copy Relative Path | `Ctrl+\`` — Toggle integrated terminal | `Alt+Tab` — Next window | `Alt+Shift+Tab` — Previous window |
+| MS Teams (web) | Cyan | `Ctrl+Shift+M` — Toggle mute | `Ctrl+Shift+K` — Raise/lower hand | `Alt+Shift+A` — Start audio call | — | System volume up | System volume down |
 
 In the VS Code profile, turning the encoder keeps `Alt` held for one second after
 the latest turn, allowing repeated turns to cycle through windows before the
@@ -49,8 +51,9 @@ While in the menu, the three regular buttons do nothing.
 
 For the six-key board, these logical LEDs are the confirmed left column:
 `LED_2` top (strip pixel 2), `LED_1` middle (strip pixel 1), and `LED_0`
-bottom (strip pixel 0). The right column is unused by the normal application:
-top/middle/bottom are strip pixels 5/4/3 respectively.
+bottom (strip pixel 0). The right column is configurable as BTN_4/BTN_5/BTN_6;
+their strip pixels are 5/4/3 respectively. BTN_4 defaults to the VS Code
+integrated-terminal shortcut; BTN_5 and BTN_6 default to empty macros.
 
 ## Other firmware shortcut
 
@@ -77,7 +80,8 @@ configuration tool:
 .\macropad_tools\build\macropad-config.exe bootloader
 ```
 
-Each button supports one or two keyboard chords. Two-chord macros also preserve a
+Each configurable button supports one or two keyboard chords. `BTN_4`–`BTN_6`
+are present for the six-key board. Two-chord macros also preserve a
 per-macro `between_chords_ms` delay: 50 ms for VS Code Preview and Copy Relative
 Path, and 30 ms for Source Control. The Windows tool validates the complete JSON;
 the device stages and checksum-verifies the update before activating it. A rejected

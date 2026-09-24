@@ -4,6 +4,7 @@
 #include "keyboard.h"
 #include "macro_config.h"
 #include "../configuration.h"
+#include "board_config.h"
 
 #define MENU_CONF NUM_CONFIGURATION - 1
 #define MENU_SELECTION_LAST 3
@@ -211,6 +212,15 @@ void keyboard_press_button(keyboard_button_t button, keyboard_button_keyboard_mo
       led_presskey(-1);
     }
   }
+
+#if BOARD_HAS_SIX_KEYS
+  if (button >= BTN_4 && button <= BTN_6)
+  {
+    // Right-column keys are six-key-only configurable macros in every profile.
+    macro_config_run((uint8_t)current_mode_s, (uint8_t)button, (uint8_t)mode);
+    return;
+  }
+#endif
 
   if (button >= BTN_1 && button <= BTN_3 && current_mode_s != MENU_CONF)
   {

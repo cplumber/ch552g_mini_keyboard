@@ -26,7 +26,7 @@ constexpr uint8_t kAlt = 0x04;
 constexpr uint8_t kGui = 0x08;
 
 constexpr const char *kProfiles[] = {"copy_paste", "google_meet", "vs_code", "ms_teams"};
-constexpr const char *kButtons[] = {"BTN_1", "BTN_2", "BTN_3"};
+constexpr const char *kButtons[] = {"BTN_1", "BTN_2", "BTN_3", "BTN_4", "BTN_5", "BTN_6"};
 
 struct Macro
 {
@@ -208,7 +208,7 @@ bool parse_macro(const std::string &section, const char *button_name, Macro &mac
     return macro.length > 0 && (macro.length == 2 || macro.inter_chord_delay_ms == 0);
 }
 
-bool parse_config(const std::string &json, std::array<std::array<Macro, 3>, 4> &config)
+bool parse_config(const std::string &json, std::array<std::array<Macro, 6>, 4> &config)
 {
     const size_t version_key = json.find("\"version\"");
     size_t version_value = version_key == std::string::npos
@@ -234,9 +234,15 @@ bool parse_config(const std::string &json, std::array<std::array<Macro, 3>, 4> &
         const size_t end = start == std::string::npos ? start : matching(json, start, '{', '}');
         if (end == std::string::npos) return false;
         const std::string section = json.substr(start, end - start + 1);
-        for (size_t button = 0; button < 3; ++button)
+        for (size_t button = 0; button < 6; ++button)
         {
-            if (!parse_macro(section, kButtons[button], config[profile][button])) return false;
+            if (!parse_macro(section, kButtons[button], config[profile][button]))
+            {
+                // Right-column buttons are optional for old three-button
+                // exports; missing entries remain empty.
+                if (button < 3) return false;
+                config[profile][button] = {};
+            }
         }
     }
     return true;
@@ -276,10 +282,25 @@ bool export_config(MacropadHid &hid, const std::string &path)
     for (uint8_t profile = 0; profile < 4; ++profile)
     {
         output << "    \"" << kProfiles[profile] << "\": {\n";
-        for (uint8_t button = 0; button < 3; ++button)
+        for (uint8_t button = 0; button < 6; ++button)
         {
             std::array<uint8_t, 9> reply = {};
-            if (!exchange(hid, kGetButton, profile, button, nullptr, &reply)) return false;
+            if (!exchange(hid, kGetButton, profile, button, nullptr, &reply))
+            {
+                // Older three-button firmware rejects the right-column keys;
+                // preserve the first three records and leave them empty.
+                if (button >= 3)
+                {
+                    for (uint8_t missing = button; missing < 6; ++missing)
+                    {
+                        output << "      \"" << kButtons[missing]
+                               << "\": {\"chords\": [], \"between_chords_ms\": 0}"
+                               << (missing == 5 ? "\n" : ",\n");
+                    }
+                    break;
+                }
+                return false;
+            }
             output << "      \"" << kButtons[button] << "\": {\"chords\": [";
             for (uint8_t step = 0; step < reply[2]; ++step)
             {
@@ -288,7 +309,7 @@ bool export_config(MacropadHid &hid, const std::string &path)
             }
             output << "], \"between_chords_ms\": "
                    << static_cast<unsigned>(reply[7]) << "}"
-                   << (button == 2 ? "\n" : ",\n");
+                   << (button == 5 ? "\n" : ",\n");
         }
         output << "    }" << (profile == 3 ? "\n" : ",\n");
     }
@@ -339,7 +360,7 @@ int main(int argc, char **argv)
     }
     if (command == "import" && argc == 3)
     {
-        std::array<std::array<Macro, 3>, 4> config = {};
+        std::array<std::array<Macro, 6>, 4> config = {};
         if (!parse_config(read_file(argv[2]), config))
         {
             std::cerr << "Invalid configuration JSON. Use an exported file as the template.\n";
@@ -348,15 +369,18 @@ int main(int argc, char **argv)
         if (!exchange(hid, kBeginUpdate, 0, 0, nullptr, nullptr)) return 1;
         for (uint8_t profile = 0; profile < 4; ++profile)
         {
-            for (uint8_t button = 0; button < 3; ++button)
+            for (uint8_t button = 0; button < 6; ++button)
             {
                 if (!exchange(hid, kSetButton, profile, button, &config[profile][button], nullptr))
                 {
+                    // A three-key firmware has no BTN_4; leave it untouched.
+                    if (button == 3) continue;
                     exchange(hid, kAbort, 0, 0, nullptr, nullptr);
                     return 1;
                 }
                 if (!exchange(hid, kSetDelay, profile, button, &config[profile][button], nullptr))
                 {
+                    if (button == 3) continue;
                     exchange(hid, kAbort, 0, 0, nullptr, nullptr);
                     return 1;
                 }

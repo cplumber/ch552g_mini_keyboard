@@ -13,6 +13,9 @@
 #define PIN_BTN_1 SIX_KEY_BTN_1
 #define PIN_BTN_2 SIX_KEY_BTN_2
 #define PIN_BTN_3 SIX_KEY_BTN_3
+#define PIN_BTN_4 SIX_KEY_BTN_4
+#define PIN_BTN_5 SIX_KEY_BTN_5
+#define PIN_BTN_6 SIX_KEY_BTN_6
 #define PIN_BTN_ENC SIX_KEY_ENCODER_PRESS
 #define ENCODER_A SIX_KEY_ENCODER_A
 #define ENCODER_B SIX_KEY_ENCODER_B
@@ -28,6 +31,9 @@
 #define PIN_BTN_1 11       // P1.1
 #define PIN_BTN_2 17       // P1.7
 #define PIN_BTN_3 16       // P1.6
+#define PIN_BTN_4 0        // no fourth key on the three-key board
+#define PIN_BTN_5 0        // no fifth key on the three-key board
+#define PIN_BTN_6 0        // no sixth key on the three-key board
 #define PIN_BTN_ENC 33     // P3.3
 #define ENCODER_A 31       // P3.1
 #define ENCODER_B 30       // P3.0

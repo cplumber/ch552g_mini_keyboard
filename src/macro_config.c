@@ -6,13 +6,14 @@
 #include "userUsbHidKeyboardMouse/USBHIDKeyboardMouse.h"
 
 #define MACRO_PROFILE_COUNT 4
-#define MACRO_BUTTON_COUNT 3
+#define MACRO_BUTTON_COUNT 6
 #define MACRO_CHORD_COUNT 2
 #define MACRO_SLOT_MARKER 0xA5
 /* Invalidate configurations written before the final profile ordering. */
-#define MACRO_FORMAT_VERSION 2
+#define MACRO_FORMAT_VERSION 7
 #define MACRO_SLOT_HEADER_SIZE 4
-#define MACRO_RECORD_SIZE 6
+#define MACRO_RECORD_SIZE 4
+#define MACRO_FIELD_COUNT 6
 #define MACRO_PAYLOAD_SIZE (MACRO_PROFILE_COUNT * MACRO_BUTTON_COUNT * MACRO_RECORD_SIZE)
 #define MACRO_SLOT_SIZE (MACRO_SLOT_HEADER_SIZE + MACRO_PAYLOAD_SIZE)
 #define MACRO_SLOT0_ADDRESS 8
@@ -39,21 +40,33 @@ static const button_macro_t defaults_s[MACRO_PROFILE_COUNT][MACRO_BUTTON_COUNT] 
         {1, {{MACRO_MOD_CTRL, 'c'}, {0, 0}}, 0},
         {1, {{MACRO_MOD_CTRL, 'v'}, {0, 0}}, 0},
         {1, {{MACRO_MOD_CTRL, 'z'}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
     },
     {
         {1, {{MACRO_MOD_CTRL, 'd'}, {0, 0}}, 0},
         {1, {{MACRO_MOD_CTRL, 'e'}, {0, 0}}, 0},
         {1, {{MACRO_MOD_CTRL | MACRO_MOD_ALT, 'h'}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
     },
     {
         {2, {{MACRO_MOD_CTRL, 'k'}, {0, 'v'}}, 50},
         {2, {{MACRO_MOD_CTRL | MACRO_MOD_SHIFT, 'g'}, {0, 'g'}}, 30},
         {2, {{MACRO_MOD_CTRL, 'k'}, {MACRO_MOD_CTRL | MACRO_MOD_SHIFT, 'c'}}, 50},
+        {1, {{MACRO_MOD_CTRL, '`'}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
     },
     {
         {1, {{MACRO_MOD_CTRL | MACRO_MOD_SHIFT, 'm'}, {0, 0}}, 0},
         {1, {{MACRO_MOD_CTRL | MACRO_MOD_SHIFT, 'k'}, {0, 0}}, 0},
         {1, {{MACRO_MOD_ALT | MACRO_MOD_SHIFT, 'a'}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
+        {0, {{0, 0}, {0, 0}}, 0},
     },
 };
 
@@ -88,7 +101,44 @@ static uint8_t calculate_checksum(const uint8_t *data, uint8_t length)
 
 static bool valid_record(const button_macro_t *record)
 {
-  return record->length <= MACRO_CHORD_COUNT;
+  return record->length <= MACRO_CHORD_COUNT &&
+         (record->chord[0].modifiers & ~MACRO_MOD_MASK) == 0 &&
+         (record->chord[1].modifiers & ~MACRO_MOD_MASK) == 0 &&
+         record->chord[0].key < 128 && record->chord[1].key < 128;
+}
+
+static void encode_record(const button_macro_t *record, uint8_t *bytes)
+{
+  bytes[0] = (uint8_t)((record->length & 0x03) |
+                       ((record->chord[0].modifiers & 0x0F) << 2) |
+                       ((record->chord[0].key & 0x03) << 6));
+  bytes[1] = (uint8_t)((record->chord[0].key >> 2) & 0x1F) |
+             (uint8_t)((record->chord[1].modifiers & 0x07) << 5);
+  bytes[2] = (uint8_t)((record->chord[1].modifiers >> 3) & 0x01) |
+             (uint8_t)((record->chord[1].key & 0x7F) << 1);
+  bytes[3] = record->inter_chord_delay_ms;
+}
+
+static void decode_record(const uint8_t *bytes, button_macro_t *record)
+{
+  record->length = bytes[0] & 0x03;
+  record->chord[0].modifiers = (bytes[0] >> 2) & 0x0F;
+  record->chord[0].key = (uint8_t)(((bytes[0] >> 6) & 0x03) |
+                                   ((bytes[1] & 0x1F) << 2));
+  record->chord[1].modifiers = (uint8_t)((bytes[1] >> 5) |
+                                         ((bytes[2] & 0x01) << 3));
+  record->chord[1].key = (bytes[2] >> 1) & 0x7F;
+  record->inter_chord_delay_ms = bytes[3];
+}
+
+static bool records_equal(const button_macro_t *left, const button_macro_t *right)
+{
+  return left->length == right->length &&
+         left->chord[0].modifiers == right->chord[0].modifiers &&
+         left->chord[0].key == right->chord[0].key &&
+         left->chord[1].modifiers == right->chord[1].modifiers &&
+         left->chord[1].key == right->chord[1].key &&
+         left->inter_chord_delay_ms == right->inter_chord_delay_ms;
 }
 
 static void get_default_record(uint8_t profile, uint8_t button, button_macro_t *record)
@@ -100,18 +150,20 @@ static void read_record(uint8_t slot, uint8_t profile, uint8_t button, button_ma
 {
   uint8_t i;
   const uint8_t address = record_address(slot, profile, button);
-  uint8_t *bytes = (uint8_t *)record;
+  uint8_t bytes[MACRO_RECORD_SIZE];
   for (i = 0; i < MACRO_RECORD_SIZE; ++i)
   {
     bytes[i] = eeprom_read_byte(address + i);
   }
+  decode_record(bytes, record);
 }
 
 static void write_record(uint8_t slot, uint8_t profile, uint8_t button, const button_macro_t *record)
 {
   uint8_t i;
   const uint8_t address = record_address(slot, profile, button);
-  const uint8_t *bytes = (const uint8_t *)record;
+  uint8_t bytes[MACRO_RECORD_SIZE];
+  encode_record(record, bytes);
   for (i = 0; i < MACRO_RECORD_SIZE; ++i)
   {
     eeprom_write_byte(address + i, bytes[i]);
@@ -124,7 +176,7 @@ static uint8_t write_and_verify_staged_record(uint8_t profile, uint8_t button,
   button_macro_t verified;
   write_record(staging_slot_s, profile, button, record);
   read_record(staging_slot_s, profile, button, &verified);
-  return valid_record(&verified) && memcmp(record, &verified, MACRO_RECORD_SIZE) == 0
+  return valid_record(&verified) && records_equal(record, &verified)
              ? MACRO_CONFIG_STATUS_OK
              : MACRO_CONFIG_STATUS_VERIFY_FAILED;
 }
@@ -425,12 +477,20 @@ uint8_t macro_config_reset_defaults(void)
 uint8_t macro_config_get_field(uint8_t profile, uint8_t button, uint8_t field)
 {
   button_macro_t record;
-  if (profile >= MACRO_PROFILE_COUNT || button >= MACRO_BUTTON_COUNT || field >= MACRO_RECORD_SIZE)
+  if (profile >= MACRO_PROFILE_COUNT || button >= MACRO_BUTTON_COUNT || field >= MACRO_FIELD_COUNT)
   {
     return 0;
   }
   read_active_record(profile, button, &record);
-  return ((const uint8_t *)&record)[field];
+  switch (field)
+  {
+  case 0: return record.length;
+  case 1: return record.chord[0].modifiers;
+  case 2: return record.chord[0].key;
+  case 3: return record.chord[1].modifiers;
+  case 4: return record.chord[1].key;
+  default: return record.inter_chord_delay_ms;
+  }
 }
 
 uint8_t macro_config_generation(void)

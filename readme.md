@@ -181,7 +181,8 @@ script can begin an upload without holding any physical buttons. This is the
 preferred upload workflow. Export the configuration before flashing and import
 it again afterward: an upload can erase DataFlash.
 
-JSON accepts up to two chords per button. Chord items may contain `Ctrl`, `Shift`,
+JSON accepts up to two chords per button. On the six-key board, `BTN_4` controls
+the right-top key and can be configured independently in every profile. Chord items may contain `Ctrl`, `Shift`,
 `Alt`, `GUI`, and one printable ASCII key. `between_chords_ms` must be `0` for a
 one-chord macro and is `0`–`255` for two chords. The firmware preserves the 10 ms
 state-change delay and 20 ms key hold for every chord.
@@ -229,9 +230,9 @@ variant:
 | Left/top (supported BTN_1) | P1.1 |
 | Left/middle (supported BTN_2) | P1.7 |
 | Left/bottom (supported BTN_3) | P1.6 |
-| Right/top (unused; confirmed) | P3.2 |
-| Right/middle (unused; confirmed) | P1.4 |
-| Right/bottom / SW2 line (unused; confirmed) | P1.5 |
+| Right/top (six-key BTN_4) | P3.2 |
+| Right/middle (six-key BTN_5) | P1.4 |
+| Right/bottom (six-key BTN_6 / SW2 startup line) | P1.5 |
 | Encoder A / B | P3.0 / P3.1 |
 | Encoder press | P3.3 |
 
@@ -259,11 +260,14 @@ powershell -File .\scripts\build.ps1 -BoardVariant three_key
 powershell -File .\scripts\build.ps1 -BoardVariant six_key -BuildPath .\build\CH55xDuino.mcs51.ch552.six_key
 ```
 
-SW2/P1.5 is held during startup/replug; because it shares the right-bottom
-switch line, the application does not poll it while running.
+SW2/P1.5 is held during startup/replug. While the application is running, the
+same line is polled as the configurable right-bottom BTN_6 key.
 Its three existing logical LED indicators use the left-column LED positions:
 mic/live is top-left (pixel 2), menu is middle-left (pixel 1), and the remaining
 logical LED is bottom-left (pixel 0, kept off).
+On the six-key board, all six physical keys are configurable as BTN_1..BTN_6.
+The VS Code default for right-top BTN_4 is `Ctrl+\``; BTN_5 and BTN_6 default
+to empty macros.
 
 ## Additional resources
 

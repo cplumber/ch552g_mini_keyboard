@@ -196,7 +196,7 @@ void USB_EP1_OUT() {
 
       switch (command) {
       case MACRO_CONFIG_CMD_GET_BUTTON:
-        if (profile < 4 && button < 3) {
+        if (profile < 4 && button < 6) {
           status = MACRO_CONFIG_STATUS_OK;
         } else {
           status = MACRO_CONFIG_STATUS_BAD_ARGUMENT;

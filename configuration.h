@@ -6,13 +6,14 @@ extern const keyboard_configuration_t configurations[NUM_CONFIGURATION];
 
 // Discovered six-key + knob board wiring (hardware mapper, 2026-09-24).
 // All six physical keys are confirmed. The main application uses BTN_1..BTN_3
-// from the left column and leaves the right column unused.
+// from the left column; the six-key build also exposes right/top/middle/bottom
+// as BTN_4..BTN_6.
 #define SIX_KEY_BTN_1 11       // CONFIRMED: left/top -> logical BTN_1, P1.1 (b)
 #define SIX_KEY_BTN_2 17       // CONFIRMED: left/middle -> logical BTN_2, P1.7 (h)
 #define SIX_KEY_BTN_3 16       // CONFIRMED: left/bottom -> logical BTN_3, P1.6 (g)
-#define SIX_KEY_BTN_4 32       // CONFIRMED: right/top = P3.2
-#define SIX_KEY_BTN_5 14       // CONFIRMED: right/middle = P1.4
-#define SIX_KEY_BTN_6 15       // CONFIRMED: right/bottom = P1.5 / SW2
+#define SIX_KEY_BTN_4 32       // CONFIRMED: right/top -> BTN_4, P3.2
+#define SIX_KEY_BTN_5 14       // CONFIRMED: right/middle -> BTN_5, P1.4
+#define SIX_KEY_BTN_6 15       // CONFIRMED: right/bottom -> BTN_6, P1.5 / SW2
 #define SIX_KEY_ENCODER_A 30   // P3.0
 #define SIX_KEY_ENCODER_B 31   // P3.1
 #define SIX_KEY_ENCODER_PRESS 33 // P3.3

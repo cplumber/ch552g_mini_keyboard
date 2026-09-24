@@ -39,7 +39,8 @@ void setup()
   }
 #endif
 
-  buttons_setup(PIN_BTN_1, PIN_BTN_2, PIN_BTN_3, PIN_BTN_ENC);
+  buttons_setup(PIN_BTN_1, PIN_BTN_2, PIN_BTN_3, PIN_BTN_ENC,
+                PIN_BTN_4, PIN_BTN_5, PIN_BTN_6);
   keyboard_setup();
   encoder_setup(ENCODER_A, ENCODER_B);
   led_set_mode(LED_LOOP);

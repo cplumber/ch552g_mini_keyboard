@@ -35,9 +35,9 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
   `src/macro_config.c` and configuration traffic uses vendor HID report ID `6`.
 - Board selection is compile-time: `scripts/build.ps1 -BoardVariant three_key`
   (default) or `six_key`. The six-key build uses the left vertical button column
-  for BTN_1..BTN_3, keeps the knob behavior, ignores the right column, and uses
-  P1.5/SW2 as a startup/replug bootloader request. P1.5 is shared with the
-  right-bottom switch, so it must not be polled while the application runs.
+  for BTN_1..BTN_6, and the build uses
+  P1.5/SW2 as a startup/replug bootloader request. While running, P1.5 is also
+  polled as BTN_6; a BTN_6 press does not request bootloader mode.
 - Report ID `6` uses 8 data bytes plus its report ID; keep the USB endpoint
   packet size in `src/userUsbHidKeyboardMouse/USBconstant.h` at 9 bytes.
 - `macropad_tools/common/` provides shared HID transport for both Windows
@@ -56,8 +56,9 @@ This repo is a CH552G USB macro keyboard firmware project with a Windows mic-mut
 - `src/macro_config.c` owns defaults, macro execution timing, DataFlash layout,
   and the single persistent configuration slot. Macro configuration survives
   power cycles but an upload can erase DataFlash.
-- `BTN_1`, `BTN_2`, `BTN_3`, and `BTN_ENC` are logical controls. Board GPIO
-  assignments belong in `configuration.h` / `src/board_config.h`; profile
+- `BTN_1`..`BTN_6` and `BTN_ENC` are logical controls; `BTN_4`..`BTN_6` exist for the
+  six-key right-column shortcuts and is ignored by the three-key hardware.
+  Board GPIO assignments belong in `configuration.h` / `src/board_config.h`; profile
   macro definitions belong in `configuration.cpp` and `src/macro_config.c`.
 - Vendor HID report ID `6` transfers eight data bytes plus its report-ID byte.
   Its USB endpoint packet size must remain nine bytes in
@@ -110,15 +111,16 @@ This section overrides only the physical mapping for the `six_key` build;
 normal application behavior remains the same as on the three-key board.
 
 - Physical orientation is knob at the top, with keys in two vertical columns.
-  The supported left column is top / middle / bottom; the right column is not
-  used by the main application.
+  The supported left column is top / middle / bottom. Right/top is six-key
+  `BTN_4`..`BTN_6` for configurable macros.
 - Select this target with `scripts/build.ps1 -BoardVariant six_key`. It supplies
   `-DBOARD_VARIANT_6KEY` and uses `bootloader_pin=p15`.
 - The three supported controls are the left column. Their confirmed logical
   assignments are: left/top = `BTN_1` = P1.1, left/middle = `BTN_2` = P1.7,
   and left/bottom = `BTN_3` = P1.6. These values live in `configuration.h`.
-- The right column is intentionally unused: P3.2/P1.4/P1.5 are confirmed
-  physical right-top/middle/bottom inputs. P1.5 is also the SW2 recovery line.
+- P3.2/P1.4/P1.5 are confirmed right-top/middle/bottom inputs mapped to
+  six-key `BTN_4`..`BTN_6`. P1.5 is also the SW2 recovery line; it is polled as
+  BTN_6 only while the application is running, never as a boot request.
 - All six LEDs are confirmed: left bottom/middle/top = pixels 0/1/2; right
   bottom/middle/top = pixels 3/4/5. The normal application uses only left
   bottom (`LED_0`, off), left middle (`LED_1`, menu), and left top (`LED_2`,
@@ -128,16 +130,18 @@ normal application behavior remains the same as on the three-key board.
   to six. Do not change this count or data pin while mapping keys or LEDs.
 - The immediate runtime bootloader combination is encoder press + all three
   left buttons. `buttons.cpp` checks the raw four inputs before any macro or
-  other button handling, then calls `BOOT_now()` immediately. It is not a
+  other button handling, then calls the bootloader path immediately. It is not a
   startup-only behavior and must remain identical on both board variants.
-- SW2/P1.5 is only a startup/replug recovery method. Do not poll P1.5 while
-  the application runs: it is electrically shared with the unused right-bottom
-  key and cannot be distinguished from it.
+- SW2/P1.5 is a startup/replug recovery method. While the application runs,
+  the same line is BTN_6 and is treated as a normal configurable key.
 - Normal LED behavior does not change: `LED_2` is solid green when the mic is
   live and blinks yellow when muted; `LED_1` shows the profile/menu color;
   `LED_0` remains off.
 - Any firmware-triggered bootloader entry briefly flashes every configured
   NeoPixel low-intensity amber, then jumps immediately to the bootloader.
+- The six-key VS Code `BTN_4` default macro is `Ctrl+\`` (toggle integrated
+  terminal). `BTN_4`..`BTN_6` can be configured independently in every profile;
+  their other defaults are empty, and they are absent on the three-key board.
 - The authoritative logical LED pixels are `SIX_KEY_LED_0_PIXEL`,
   `SIX_KEY_LED_1_PIXEL`, and `SIX_KEY_LED_2_PIXEL` in `configuration.h`.
   `src/led.h` must reference these definitions; do not hardcode alternate
