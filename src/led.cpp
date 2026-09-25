@@ -9,16 +9,6 @@ static volatile uint8_t usb_suspended_s = 0;
 static unsigned long mic_blink_last_toggle_ms_s = 0;
 static uint8_t mic_blink_visible_s = 1;
 
-static const uint8_t menu_palette_s[] = {
-    NEO_RED,
-    NEO_YEL,
-    NEO_GREEN,
-    NEO_CYAN,
-    NEO_BLUE,
-    NEO_MAG,
-    NEO_WHITE,
-};
-
 static const uint8_t menu_rgb_s[][3] = {
     {1, 0, 0}, // red
     {1, 1, 0}, // yellow
@@ -76,7 +66,7 @@ static void render_menu_pixel(void)
 {
   if (led_mode_s == LED_MENU || led_mode_s == LED_LOOP)
   {
-    const uint8_t index = menu_profile_s % (sizeof(menu_palette_s) / sizeof(menu_palette_s[0]));
+    const uint8_t index = menu_profile_s % (sizeof(menu_rgb_s) / sizeof(menu_rgb_s[0]));
     write_menu_rgb(index, led_mode_s == LED_MENU ? menu_brightness_s : selected_brightness_s);
     return;
   }
@@ -109,11 +99,6 @@ void led_set_usb_suspended(uint8_t suspended)
 uint8_t led_get_mic_mute_state(void)
 {
   return mic_muted_s;
-}
-
-void led_presskey(int key)
-{
-  (void)key;
 }
 
 void led_update()

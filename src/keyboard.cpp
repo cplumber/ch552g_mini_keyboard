@@ -201,18 +201,6 @@ void button_menu_down(keyboard_button_keyboard_mode_t mode)
 
 void keyboard_press_button(keyboard_button_t button, keyboard_button_keyboard_mode_t mode)
 {
-  if (button >= BTN_1 && button <= BTN_3)
-  {
-    if (mode == BTM_PRESS)
-    {
-      led_presskey(button);
-    }
-    else
-    {
-      led_presskey(-1);
-    }
-  }
-
 #if BOARD_HAS_SIX_KEYS
   if (button >= BTN_4 && button <= BTN_6)
   {

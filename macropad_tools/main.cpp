@@ -53,7 +53,7 @@ std::string timestamp_now()
     return buffer;
 }
 
-void log_info(const char *fmt, ...)
+void log_message(std::FILE *stream, const char *fmt, ...)
 {
     if (g_windowless)
     {
@@ -62,28 +62,15 @@ void log_info(const char *fmt, ...)
 
     va_list args;
     va_start(args, fmt);
-    std::fprintf(stdout, "[%s] ", timestamp_now().c_str());
-    std::vfprintf(stdout, fmt, args);
-    std::fprintf(stdout, "\n");
-    std::fflush(stdout);
+    std::fprintf(stream, "[%s] ", timestamp_now().c_str());
+    std::vfprintf(stream, fmt, args);
+    std::fprintf(stream, "\n");
+    std::fflush(stream);
     va_end(args);
 }
 
-void log_error(const char *fmt, ...)
-{
-    if (g_windowless)
-    {
-        return;
-    }
-
-    va_list args;
-    va_start(args, fmt);
-    std::fprintf(stderr, "[%s] ", timestamp_now().c_str());
-    std::vfprintf(stderr, fmt, args);
-    std::fprintf(stderr, "\n");
-    std::fflush(stderr);
-    va_end(args);
-}
+#define log_info(...) log_message(stdout, __VA_ARGS__)
+#define log_error(...) log_message(stderr, __VA_ARGS__)
 
 template <typename T>
 void release_com(T *&ptr)

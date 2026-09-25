@@ -52,6 +52,4 @@ uint8_t led_get_mic_mute_state(void);
 // update led task
 void led_update();
 
-//if in loop mode, change color to pressed key
-void led_presskey(int key);
 
