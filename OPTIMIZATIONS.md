@@ -1,24 +1,20 @@
 # Firmware Optimization Notes
 
 Current firmware is close to the flash limit, so feature removals and small logic
-simplifications remain the safest wins. Auto-mode support was removed to make
-room for persistent, transaction-safe profile-button configuration.
+simplifications remain the safest wins. The notes below describe only the
+current codebase and the remaining low-risk options.
 
-Latest build: 12,810 / 14,336 bytes flash (89%) and 467 / 876 bytes RAM (53%).
-Keep at least the remaining 1,526 bytes of flash available for future changes.
+Latest builds:
+
+- Three-key: 13,956 / 14,336 bytes flash (97%) and 545 / 876 bytes RAM (62%).
+- Six-key: 14,290 / 14,336 bytes flash (99%) and 554 / 876 bytes RAM (63%).
+
+The six-key build has only 46 bytes of flash remaining, so future changes must
+be measured against that variant.
 
 ## Biggest likely wins
 
-1. Auto-mode support (implemented)
-- `src/auto_mode.cpp` and its unused automatic keyboard/mouse routines were
-  removed.
-
-2. Replace menu division/modulo
-- `src/keyboard.cpp` still uses `menu_mode_s % 3` and `menu_mode_s / 3` in the menu LED logic.
-- On this toolchain, division and modulo can pull in helper routines.
-- A small branch or lookup-table version should keep the same behavior with less code.
-
-3. Keep the USB/HID layer stable
+1. Keep the USB/HID layer stable
 - `src/userUsbHidKeyboardMouse/USBHIDKeyboardMouse.c` and `src/userUsbHidKeyboardMouse/USBhandler.c` are large, but they are core functionality.
 - They already handle keyboard, mouse, consumer control, suspend/resume, and LED feedback.
 - Avoid changing these first unless there is a clear bug.

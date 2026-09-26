@@ -56,7 +56,10 @@ powershell -File .\scripts\build.ps1
 
 The script automatically looks for the bundled `arduino-cli.exe` inside the Arduino IDE install, and it writes the build output to `build/CH55xDuino.mcs51.ch552/`.
 
-Current built size: 12,810 / 14,336 bytes of flash (89%) and 467 / 876 bytes of RAM (53%).
+Current built sizes:
+
+- Three-key: 13,956 / 14,336 bytes of flash (97%); 545 / 876 bytes of RAM (62%).
+- Six-key: 14,290 / 14,336 bytes of flash (99%); 554 / 876 bytes of RAM (63%).
 
 If you want to change the board settings later, edit the default `-Fqbn` value at the top of the script or pass a new one on the command line.
 

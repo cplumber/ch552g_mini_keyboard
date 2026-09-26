@@ -232,7 +232,9 @@ Bridge build:
 
 Build outputs:
 
-- Firmware: 12,810 / 14,336 bytes flash (89%); 467 / 876 bytes RAM (53%).
+- Firmware sizes from the latest clean builds:
+  - Three-key: 13,956 / 14,336 bytes flash (97%); 545 / 876 bytes RAM (62%).
+  - Six-key: 14,290 / 14,336 bytes flash (99%); 554 / 876 bytes RAM (63%).
 - Windows: `macropad_tools\build\mic-mute-bridge.exe` and
   `macropad_tools\build\macropad-config.exe`.
 
